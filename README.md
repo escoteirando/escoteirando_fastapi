@@ -1,0 +1,1 @@
+# escoteirando_fastapi
