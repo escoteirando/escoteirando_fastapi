@@ -3,7 +3,7 @@ import time
 import uuid
 
 from src.domain.responses import AuthLoginResponse
-from src.domain.user import User
+from src.domain.entities.user import User
 
 logger = logging.getLogger(__name__)
 

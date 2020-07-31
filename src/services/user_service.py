@@ -1,4 +1,4 @@
-from src.domain.user import User
+from src.domain.entities.user import User
 from src.repositories import UserRepository
 
 import logging
