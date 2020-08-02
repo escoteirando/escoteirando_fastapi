@@ -45,6 +45,10 @@ class AuthorizationService:
 
         valid_until = time.time()+self._config.AUTHORIZATION_TTL
         auth = self.create_authorizaton(user)
+        if not auth:
+            return AuthLoginResponse(authorization=None,
+                                     message="Authorization engine failed",
+                                     valid_until=0)
         return AuthLoginResponse(authorization=auth,
                                  message="Authorized",
                                  validUntil=valid_until)

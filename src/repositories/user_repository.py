@@ -10,7 +10,14 @@ class UserRepository(BaseRepository):
                          collection_name="user",
                          entity_type=User)
 
-    def get_user_by_email(self, email: str) -> User:
-        user = self._collection.find_one({"email": email})
+    def get_user(self, filter) -> User:
+        user = self._collection.find_one(filter)
         if user:
-            return User(user)
+            user.update({'id': user['_id']})
+            return User(**user)
+
+    def get_user_by_email(self, email: str) -> User:
+        return self.get_user({'email': email})
+
+    def get_user_by_name(self, username: str) -> User:
+        return self.get_user({'name': username})

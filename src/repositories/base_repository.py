@@ -14,6 +14,7 @@ class BaseRepository:
 
     def __init__(self, connection, entity_type, collection_name=None):
         global _auto_inc_repository
+        _auto_inc_repository = AutoIncRepository.Instance(connection)
 
         class_name = str(self.__class__).split("'")[1].split('.')[-1]
 
@@ -38,8 +39,6 @@ class BaseRepository:
         return self._collection
 
     def save(self, model: BaseModel):
-        _auto_inc_repository = AutoIncRepository.Instance(self._connection)
-        _auto_inc_repository.refresh_counters()
         if not isinstance(model, self._entity_type):
             raise RepositoryException(
                 "Model {0} ({1}) is not a ({2}})".format(

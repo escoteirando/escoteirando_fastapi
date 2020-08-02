@@ -1,7 +1,11 @@
 from fastapi import status
 from fastapi.responses import RedirectResponse
 
-import src.controllers
+from src.controllers import import_controllers
+if not import_controllers():
+    print("ERROR WHEN LOADING CONTROLLERS")
+    exit()
+
 import uvicorn
 from src import app
 

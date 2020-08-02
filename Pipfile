@@ -14,7 +14,7 @@ python-dotenv = "*"
 aiofiles = "*"
 pymongo = "*"
 config-guiosoft = "*"
-uvunicorn = "*"
+py3-validate-email = "*"
 
 [requires]
 python_version = "3.8"
