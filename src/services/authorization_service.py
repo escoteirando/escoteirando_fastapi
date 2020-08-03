@@ -1,11 +1,11 @@
-import logging
 import time
 import uuid
 
-from src.domain.responses import AuthLoginResponse
+from src.app import get_logger
 from src.domain.entities.user import User
+from src.domain.responses import AuthLoginResponse
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 class AuthorizationService:

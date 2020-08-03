@@ -1,10 +1,9 @@
-import logging
-
 from pymongo.collection import Collection
 
+from src.app import get_logger
 from src.cross_cutting import Singleton
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 @Singleton

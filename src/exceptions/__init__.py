@@ -1,6 +1,15 @@
 class DBConnectionException(Exception):
-    pass
+    def __init__(self, message: str, *args, **kwargs):
+        if args or kwargs:
+            super().__init__(message.format(*args, **kwargs))
+        else:
+            super().__init__(message)
 
 
 class RepositoryException(Exception):
-    pass
+
+    def __init__(self, message: str, *args, **kwargs):
+        if args or kwargs:
+            super().__init__(message.format(*args, **kwargs))
+        else:
+            super().__init__(message)

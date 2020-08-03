@@ -1,15 +1,15 @@
 import datetime
-import logging
 from typing import List
 
 from pymongo import MongoClient
 from pymongo.collection import Collection, IndexModel
 from pymongo.database import Database
 
+from src.app import get_logger
 from src.exceptions import DBConnectionException
 from src.repositories.unique_data_repository import UniqueDataRepository
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 class DBConnection:

@@ -1,12 +1,13 @@
-import logging
 import time
 
 from fastapi import Request, status
 from fastapi.responses import JSONResponse
 
 from src import app
+from src.app import get_logger
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
+
 _noauth_routes = []
 
 

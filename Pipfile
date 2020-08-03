@@ -10,11 +10,11 @@ autopep8 = "*"
 [packages]
 fastapi = "*"
 uvicorn = "*"
-python-dotenv = "*"
 aiofiles = "*"
 pymongo = "*"
 config-guiosoft = "*"
 py3-validate-email = "*"
+password-strength = "*"
 
 [requires]
 python_version = "3.8"

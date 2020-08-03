@@ -1,11 +1,12 @@
-import logging
-
 from pydantic import BaseModel
 from pymongo.collection import Collection, InsertOneResult, UpdateResult
 
+from src.app import get_logger
 from src.exceptions import RepositoryException
 
 from .autoinc_repository import AutoIncRepository
+
+logger = get_logger(__name__)
 
 _auto_inc_repository = None
 
@@ -18,7 +19,7 @@ class BaseRepository:
 
         class_name = str(self.__class__).split("'")[1].split('.')[-1]
 
-        self.logger = logging.getLogger(class_name)
+        self.logger = get_logger(class_name)
         if not issubclass(entity_type, BaseModel):
             raise RepositoryException(
                 "Entity type is not a BaseModel", entity_type)
@@ -41,8 +42,8 @@ class BaseRepository:
     def save(self, model: BaseModel):
         if not isinstance(model, self._entity_type):
             raise RepositoryException(
-                "Model {0} ({1}) is not a ({2}})".format(
-                    repr(model), model.__class__, self._entity_type))
+                "Model {0} ({1}) is not a ({2}})",
+                repr(model), model.__class__, self._entity_type)
 
         try:
             if model.id <= 0:

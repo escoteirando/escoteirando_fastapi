@@ -1,13 +1,13 @@
+import uvicorn
 from fastapi import status
 from fastapi.responses import RedirectResponse
 
+from src import app
 from src.controllers import import_controllers
+
 if not import_controllers():
     print("ERROR WHEN LOADING CONTROLLERS")
     exit()
-
-import uvicorn
-from src import app
 
 
 @app.get("/")

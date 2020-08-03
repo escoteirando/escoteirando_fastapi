@@ -1,12 +1,16 @@
-from src.domain.entities.user import User
-from src.repositories import UserRepository
-from src.domain.requests import AuthSubscribeRequest
-from src.domain.responses import AuthSubscribeResponse
-import logging
-from src.services.mailer_service import MailerService
+from datetime import datetime
 from hashlib import sha1
 
-logger = logging.getLogger(__name__)
+from password_strength import PasswordPolicy
+
+from src.app import get_logger
+from src.domain.entities.user import User
+from src.domain.requests import AuthSubscribeRequest
+from src.domain.responses import AuthSubscribeResponse
+from src.repositories import UserRepository
+from src.services.mailer_service import MailerService
+
+logger = get_logger(__name__)
 
 
 class UserService:
@@ -17,6 +21,14 @@ class UserService:
         logger.info('INIT')
         self._user_repository = user_repository
         self._mailer_service = mailer_service
+        self._password_policy: PasswordPolicy = PasswordPolicy.from_names(
+            length=8,  # min length: 8
+            uppercase=2,  # need min. 2 uppercase letters
+            numbers=2,  # need min. 2 digits
+            special=2,  # need min. 2 special characters
+            # need min. 2 non-letter characters (digits, specials, anything)
+            nonletters=2,
+        )
 
     def create_user(
             self,
@@ -37,8 +49,8 @@ class UserService:
         if not user_request.password:
             errors.append("Senha não foi informada")
         elif self.password_restrictions(user_request.password):
-            errors.append("Senha não atende os padrões de complexidade [")
-            # TODO: Implementar password_restrictions
+            errors.append("Senha não atende os padrões de complexidade")
+
         if errors:
             return AuthSubscribeResponse(success=False,
                                          message=str(errors))
@@ -48,13 +60,17 @@ class UserService:
                     email=user_request.email,
                     ueb_id=0,
                     active=False,
-                    password_hash='')
+                    password_hash=self._password_hash(user_request.password),
+                    creation_date=datetime.now(),
+                    validated=False)
         if self._user_repository.save(user):
-            return AuthSubscribeResponse(success=True,
-                                         message="Usuário criado")
+            return AuthSubscribeResponse(
+                success=True,
+                message="Usuário criado")
 
-        return AuthSubscribeResponse(success=False,
-                                     message="Não foi possível criar o usuário")
+        return AuthSubscribeResponse(
+            success=False,
+            message="Não foi possível criar o usuário")
 
     def is_valid_username(self, username) -> bool:
         """ Username validation:
@@ -80,8 +96,7 @@ class UserService:
         Deve retornar vazio se a senha estiver OK.
         Caso contrário, deve retornar o problema com a senha
         """
-        # TODO: Implementar password_restrictions
-        return ""
+        return self._password_policy.test(password)
 
     def is_valid_password(self, user: User, password: str) -> bool:
         return self._password_hash(password) == user.password_hash

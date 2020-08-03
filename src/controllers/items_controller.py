@@ -1,8 +1,8 @@
 from typing import Optional
 
+from fastapi import Response, status
 from pydantic import BaseModel
 
-from fastapi import Response, status
 from src.app import app
 from src.domain.requests.auth_subscribe_request import AuthSubscribeRequest
 from src.domain.responses.auth_subscribe_response import AuthSubscribeResponse

@@ -1,10 +1,10 @@
+import glob
 import importlib
 import os
-import glob
-import logging
 
+from src.app import get_logger
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 def import_controllers():

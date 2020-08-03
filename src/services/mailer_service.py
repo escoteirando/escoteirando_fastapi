@@ -1,14 +1,16 @@
-from threading import Thread
-from validate_email import validate_email
-from queue import Queue
 import math
-import time
 import smtplib
 import ssl
-import logging
+import time
+from queue import Queue
+from threading import Thread
+
+from validate_email import validate_email
+
+from src.app import get_logger
 from src.cross_cutting import Singleton
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 @Singleton
