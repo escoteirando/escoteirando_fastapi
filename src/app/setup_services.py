@@ -1,7 +1,3 @@
-import logging
-import logging.config
-import os
-
 from fastapi import FastAPI
 
 from src.app import get_logger
