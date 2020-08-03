@@ -1,14 +1,29 @@
 import logging
 import os
-
-logging.config.fileConfig(
-    os.path.join('src', 'logging.conf'),
-    disable_existing_loggers=False)
+import tempfile
 
 
-def get_logger(__name__) -> logging.Logger:
+def setup_log():
+    log_level = os.getenv('LOG_LEVEL', 'DEBUG')
+    config_file = os.path.join('src', 'logging.conf')
+    with open(config_file) as f:
+        config_setup = f.read()
 
-    return logging.getLogger(_logger_name(__name__))
+    if log_level != 'DEBUG':
+        config_setup = config_setup.replace('DEBUG', log_level)
+
+    with tempfile.NamedTemporaryFile(mode='w') as f:
+        f.write(config_setup)
+        f.flush()
+        logging.config.fileConfig(
+            f.name,
+            disable_existing_loggers=False)
+
+    get_logger(__name__).info('INIT LOGGING [LEVEL=%s]', log_level)
+
+
+def get_logger(name) -> logging.Logger:
+    return logging.getLogger(_logger_name(name))
 
 
 def _logger_name(name):
@@ -23,3 +38,6 @@ def _logger_name(name):
     elif words[0] == 'app':
         words[0] = 'APP'
     return '.'.join(words)
+
+
+setup_log()
