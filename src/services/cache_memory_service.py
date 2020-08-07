@@ -23,5 +23,6 @@ class CacheMemoryService:
     def get_value(self, key: str) -> object:
         value = self._values.get(key, None)
         if value and (value[1] == 0 or value[1] >= time.time()):
-            return value
+            return value[0]
         self._values.pop(key, None)
+    

@@ -1,3 +1,4 @@
+from src.domain.responses.user_data_response import UserDataResponse
 import time
 import uuid
 
@@ -26,7 +27,7 @@ class AuthorizationService:
                                  self._config.AUTHORIZATION_TTL):
             return new_auth
 
-    def user_from_authorizatioin(self, authorization: str) -> User:
+    def user_from_authorization(self, authorization: str) -> User:
         obj = self._cache.get_value(self._auth_key(authorization))
         if obj:
             obj = User.construct(**obj)
@@ -51,4 +52,15 @@ class AuthorizationService:
                                      valid_until=0)
         return AuthLoginResponse(authorization=auth,
                                  message="Authorized",
-                                 validUntil=valid_until)
+                                 validUntil=valid_until,
+                                 user=UserDataResponse(name=user.name,
+                                                       email=user.email))
+
+    def get_authorization_data(self, authorization: str) -> AuthLoginResponse:
+        user = self.user_from_authorization(authorization)
+        if user:
+            return AuthLoginResponse(authorization=authorization,
+                                     user=UserDataResponse(name=user.name,
+                                                           email=user.email),
+                                     message="Authorized")
+        return AuthLoginResponse(message='Authorization not found or expired')

@@ -1,13 +1,22 @@
 <template>
   <div>
     <h1>Teste Home</h1>
-    <a href="/docs">Swagger</a>
+    <a :href="swagger" target="empty">Swagger</a>
+    <p>{{ getUser }}</p>
   </div>
 </template>
 
 <script>
-export default {};
+import { mapGetters } from "vuex";
+export default {
+  computed: {
+    ...mapGetters("auth", ["getUser"]),
+    ...mapGetters('backend',['getHost']),
+    swagger() {
+      return this.getHost+'/docs'
+    }
+  },
+};
 </script>
 
-<style>
-</style>
+<style></style>

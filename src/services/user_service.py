@@ -112,3 +112,9 @@ class UserService:
 
     def get_user_by_email(self, email: str) -> User:
         return self._user_repository.get_user_by_email(email)
+
+    def get_user(self, username_email: str) -> User:
+        user = self.get_user_by_name(username_email)
+        if not user:
+            user = self.get_user_by_email(username_email)
+        return user
