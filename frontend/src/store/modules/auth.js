@@ -28,7 +28,7 @@ const actions = {
             })
     },
     get_login_from_auth({ commit, rootGetters, dispatch }) {
-        const authorization = window.localStorageEx.getValue(AUTH)
+        const authorization = window.API.LOCAL_STORAGE.getValue(AUTH)
         if (!authorization) {
             console.log('[AUTH] NO AUTHORIZATION DATA')
             return
@@ -44,7 +44,7 @@ const actions = {
             })
     },
     get_login_from_auth_old({ commit, rootState }) {
-        const authorization = window.localStorageEx.getValue(AUTH)
+        const authorization = window.API.LOCAL_STORAGE.getValue(AUTH)
         if (!authorization) {
             console.log('[AUTH] NO AUTHORIZATION DATA')
             return
@@ -67,7 +67,7 @@ const mutations = {
         s.authorization = login_data.authorization
         s.validUntil = login_data.validUntil
         s.user = login_data.user
-        window.localStorageEx.setValue('ESCOTEIRANDO_AUTH', login_data.authorization, login_data.validUntil)
+        window.API.LOCAL_STORAGE.setValue('ESCOTEIRANDO_AUTH', login_data.authorization, login_data.validUntil)
         console.log('[AUTH] SET LOGIN DATA', login_data)
     }
 }

@@ -36,10 +36,10 @@ class AuthorizationService:
     def login(self, username: str, password: str) -> AuthLoginResponse:
         user: User = self._user_service.get_user(username)
         if not user:
-            return AuthLoginResponse(message='User not found')
+            return AuthLoginResponse(message='Usuário não encontrado')
 
         if not self._user_service.is_valid_password(user, password):
-            return AuthLoginResponse(message='Invalid password')
+            return AuthLoginResponse(message='Senha inválida')
 
         if not user.active:
             return AuthLoginResponse(message="User is inactive")

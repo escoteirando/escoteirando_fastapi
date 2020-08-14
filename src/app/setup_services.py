@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
 from src.app import get_logger
 from src.app.config import Config
 from src.app.db_connection import DBConnection
@@ -41,4 +42,5 @@ def setup(app: FastAPI):
         allow_methods=["*"],
         allow_headers=["*"]
     )
+
     logger.info('END')

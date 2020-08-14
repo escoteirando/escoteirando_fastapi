@@ -11,8 +11,6 @@ const local_storage_factory = () => {
                 v = JSON.parse(v)
                 if (v._u <= 0 || v._u > currentTimeStamp()) {
                     if (v._v) { defaultValue = v._v }
-                } else {
-                    localStorage.removeItem(key)
                 }
             } catch (e) {
                 console.error('[LOCALSTORAGE] Error on getValue', key, e)
@@ -23,22 +21,13 @@ const local_storage_factory = () => {
 
     const deleteValue = (key) => localStorage.removeItem(key)
 
-    const currentTimeStamp = () => Math.round((new Date()).getTime() / 1000)
-
     return {
         setValue,
         getValue,
-        deleteValue,
-        currentTimeStamp
+        deleteValue
     }
 }
 
-const setup_local_storage = () => {
-    if (!window.localStorageEx) {
-        window.localStorageEx = local_storage_factory()
-        console.debug('[LocalStorageEx] INIT')
-    }
-}
 const currentTimeStamp = () => Math.round((new Date()).getTime() / 1000)
 
-export { local_storage_factory, currentTimeStamp, setup_local_storage }
+export { local_storage_factory, currentTimeStamp }

@@ -1,27 +1,33 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png" />
-    <TestHome />
-  </div>
+  <v-app>
+    <NavBar />
+
+    <v-main>
+      <router-view />
+      <!-- <AuthLogin /> -->
+      <!-- <HelloWorld /> -->
+    </v-main>
+    <Footer />
+  </v-app>
 </template>
 
 <script>
-import TestHome from "./components/TestHome";
+// import HelloWorld from "./components/HelloWorld";
+// import AuthLogin from "./views/AuthLogin";
+import NavBar from "./components/NavBar";
+import Footer from "./components/Footer";
 export default {
   name: "App",
+
   components: {
-    TestHome,
+    // HelloWorld,
+    // AuthLogin,
+    NavBar,
+    Footer,
   },
+
+  data: () => ({
+    //
+  }),
 };
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>

@@ -1,11 +1,10 @@
-from src.domain.responses.auth_subscribe_response import AuthSubscribeResponse
 from fastapi import Response, status
-from fastapi.responses import JSONResponse
 
 from src import app
 from src.app import get_logger
+from src.domain.enums import AuthMessage
 from src.domain.requests import AuthLoginRequest, AuthSubscribeRequest
-from src.domain.responses import AuthLoginResponse
+from src.domain.responses import AuthLoginResponse, BaseResponse
 
 logger = get_logger(__name__)
 
@@ -26,13 +25,13 @@ async def login(request: AuthLoginRequest, response: Response):
                              user=auth_response.user)
 
 
-@app.post("/auth/logout", status_code=status.HTTP_202_ACCEPTED)
+@app.post("/auth/logout",
+          status_code=status.HTTP_202_ACCEPTED,
+          response_model=BaseResponse)
 async def logout(authorization: str):
     logger.info("Logout: %s", authorization)
-    return JSONResponse(
-        status_code=status.HTTP_202_ACCEPTED,
-        content={"msg": "Logged-out"}
-    )
+    app.AUTH.clear_authorizationi(authorization)
+    return BaseResponse(ok=True, msg=AuthMessage.LOGOUT)
 
 
 @app.post("/auth/user/{authorization}",
@@ -52,7 +51,7 @@ async def get_authorization_data(authorization: str, response: Response):
 
 @app.post("/auth/subscribe",
           status_code=status.HTTP_202_ACCEPTED,
-          response_model=AuthSubscribeResponse)
+          response_model=BaseResponse)
 async def subscribe(request: AuthSubscribeRequest):
     logger.info("Subscribe: %s", request)
     return app.USER.create_user(request)

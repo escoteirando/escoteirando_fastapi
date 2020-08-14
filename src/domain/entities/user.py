@@ -9,6 +9,7 @@ class User(BaseModel):
     name: str
     email: str
     ueb_id: Optional[int]
+    mappa_user: Optional[str]
     active: bool
     password_hash: str
     creation_date: datetime

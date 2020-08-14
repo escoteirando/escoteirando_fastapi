@@ -1,12 +1,14 @@
 from datetime import datetime
 from hashlib import sha1
+from typing import List
 
 from password_strength import PasswordPolicy
 
 from src.app import get_logger
 from src.domain.entities.user import User
+from src.domain.enums import UserMessage
 from src.domain.requests import AuthSubscribeRequest
-from src.domain.responses import AuthSubscribeResponse
+from src.domain.responses import BaseResponse, UserMenuResponse
 from src.repositories import UserRepository
 from src.services.mailer_service import MailerService
 
@@ -22,17 +24,17 @@ class UserService:
         self._user_repository = user_repository
         self._mailer_service = mailer_service
         self._password_policy: PasswordPolicy = PasswordPolicy.from_names(
-            length=8,  # min length: 8
-            uppercase=2,  # need min. 2 uppercase letters
-            numbers=2,  # need min. 2 digits
-            special=2,  # need min. 2 special characters
+            length=5,  # min length: 8
+            uppercase=1,  # need min. 2 uppercase letters
+            numbers=1,  # need min. 2 digits
+            special=1,  # need min. 2 special characters
             # need min. 2 non-letter characters (digits, specials, anything)
-            nonletters=2,
+            nonletters=1,
         )
 
     def create_user(
             self,
-            user_request: AuthSubscribeRequest) -> AuthSubscribeResponse:
+            user_request: AuthSubscribeRequest) -> BaseResponse:
         errors = []
         if not user_request.username:
             errors.append("Usuário não informado")
@@ -52,8 +54,9 @@ class UserService:
             errors.append("Senha não atende os padrões de complexidade")
 
         if errors:
-            return AuthSubscribeResponse(success=False,
-                                         message=str(errors))
+            return BaseResponse(ok=False,
+                                code=UserMessage.USER_NOT_CREATED,
+                                msg=str(errors))
 
         user = User(id=0,
                     name=user_request.username,
@@ -64,13 +67,11 @@ class UserService:
                     creation_date=datetime.now(),
                     validated=False)
         if self._user_repository.save(user):
-            return AuthSubscribeResponse(
-                success=True,
-                message="Usuário criado")
+            return BaseResponse(ok=True,
+                                code=UserMessage.USER_CREATED)
 
-        return AuthSubscribeResponse(
-            success=False,
-            message="Não foi possível criar o usuário")
+        return BaseResponse(ok=False,
+                            code=UserMessage.USER_NOT_CREATED_SAVING_ERROR)
 
     def is_valid_username(self, username) -> bool:
         """ Username validation:
@@ -118,3 +119,9 @@ class UserService:
         if not user:
             user = self.get_user_by_email(username_email)
         return user
+
+    def get_user_menu(self, user: User) -> List[UserMenuResponse]:
+        return [
+            UserMenuResponse(id=999, text='Sair',
+                             route='/auth/logout', icon='mdi-exit-to-app')
+        ]
