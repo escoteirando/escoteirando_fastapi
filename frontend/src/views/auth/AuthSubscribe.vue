@@ -94,14 +94,14 @@ export default {
         .then((response) => {
           if (!response.data.ok) {
             console.error("REGISTRAR", response.data);
-            this.$swal.fire({
+            this.$fire({
               title: getUserMessage(response.data.code),
               icon: "error",
               text: response.data.msg,
             });
           } else {
             console.log("REGISTRAR", response.data);
-            this.$swal.fire({
+            this.$fire({
               title: getUserMessage(response.data.code),
               icon: "success",
               text: response.data.msg,

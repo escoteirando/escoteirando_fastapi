@@ -2,14 +2,15 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import VueSeetalert2 from 'vue-sweetalert2'
 
 import './plugins/api'
 
+import VueSimpleAlert from "vue-simple-alert";
 import vuetify from './plugins/vuetify';
-import '@sweetalert2/theme-material-ui/material-ui.css'
+import './assets/styles/swal.css'
 
-Vue.use(VueSeetalert2)
+Vue.use(VueSimpleAlert);
+
 Vue.config.productionTip = false
 
 new Vue({

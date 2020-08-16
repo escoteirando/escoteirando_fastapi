@@ -2,7 +2,15 @@
   <v-footer dark padless>
     <v-card class="flex" flat tile>
       <v-card-title class="primary">
-        <strong class="subheading">Fique conectado</strong>
+        <a
+          v-for="link in left_links"
+          :key="link"
+          :href="link.href"
+          :title="link.title"
+          target="_empty"
+        >
+          <v-img :alt="link.alt" class="shrink mr-2" contain :src="link.src" width="40" />
+        </a>
 
         <v-spacer></v-spacer>
 
@@ -32,7 +40,7 @@ import ComplianceTextButton from "./ComplianceTextButton";
 import { ENVIRONMENT } from "../api/consts";
 export default {
   components: { ComplianceTextButton },
-  data: () => ({    
+  data: () => ({
     links: [
       {
         icon: "mdi-github",
@@ -43,6 +51,20 @@ export default {
         icon: "mdi-linkedin",
         url: "https://www.linkedin.com/in/guionardo/",
         title: "LinkedIn",
+      },
+    ],
+    left_links: [
+      {
+        src: require("../assets/escoteiros.svg"),
+        href: "https://escoteiros.org.br",
+        alt: "Escoteiros Logo",
+        title: "Escoteiros do Brasil",
+      },
+      {
+        src: require("../assets/scouts.svg"),
+        href: "https://scout.org",
+        alt: "Scouts Logo",
+        title: "Scouts",
       },
     ],
     development: ENVIRONMENT == "DEVELOPMENT",
