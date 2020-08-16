@@ -12,4 +12,9 @@ const msgPTBR = {
 const msgs = {
     'ptbr': msgPTBR
 }
-export const getUserMessage = (code) => msgs[currentLanguage()][code] || `UNDEFINED MESSAGE ${code}`
+
+const getUserMessage = (code) => msgs[currentLanguage()][code] || `UNDEFINED MESSAGE ${code}`
+
+export default {
+    getUserMessage
+}
