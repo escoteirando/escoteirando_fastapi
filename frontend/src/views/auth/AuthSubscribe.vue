@@ -52,7 +52,7 @@
 <script>
 import ComplianceTextButton from "../../components/ComplianceTextButton";
 import PasswordField from "../../components/PasswordField";
-import getUserMessage from "../../i18/user_messages";
+// import getUserMessage from "../../i18/user_messages";
 
 import {
   isValidEmail,
@@ -95,14 +95,14 @@ export default {
           if (!response.data.ok) {
             console.error("REGISTRAR", response.data);
             this.$fire({
-              title: getUserMessage(response.data.code),
+              title: "Erro",
               icon: "error",
               text: response.data.msg,
             });
           } else {
             console.log("REGISTRAR", response.data);
             this.$fire({
-              title: getUserMessage(response.data.code),
+              title: "Sucesso",
               icon: "success",
               text: response.data.msg,
             });

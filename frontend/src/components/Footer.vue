@@ -4,7 +4,7 @@
       <v-card-title class="primary">
         <a
           v-for="link in left_links"
-          :key="link"
+          :key="link.href"
           :href="link.href"
           :title="link.title"
           target="_empty"

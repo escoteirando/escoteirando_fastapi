@@ -2,10 +2,11 @@ import math
 import smtplib
 import ssl
 import time
+import re
 from queue import Queue
 from threading import Thread
+from email_validator import validate_email, EmailNotValidError
 
-from validate_email import validate_email
 
 from src.app import get_logger
 from src.cross_cutting import Singleton
@@ -104,12 +105,15 @@ class MailerService:
             self.is_sending = False
 
     def is_valid_email(self, email) -> bool:
-        return validate_email(email_address=email,
-                              check_regex=True,
-                              check_mx=True,
-                              from_address=self.sender_email,
-                              helo_host=self.smtp_host,
-                              smtp_timeout=10,
-                              dns_timeout=10,
-                              use_blacklist=True,
-                              debug=False)
+        try:
+            # Validate.
+            valid = validate_email(email)
+            logger.debug('Valid email: %s = %s', email, valid.email)
+
+            # Update with the normalized form.
+            email = valid.email
+            return True
+        except EmailNotValidError as e:
+            # email is not valid, exception message is human-readable
+            logger.warning('Invalid email: %s %s', email, str(e))
+        return False

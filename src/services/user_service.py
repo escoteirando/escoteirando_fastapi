@@ -55,7 +55,6 @@ class UserService:
 
         if errors:
             return BaseResponse(ok=False,
-                                code=UserMessage.USER_NOT_CREATED,
                                 msg=str(errors))
 
         user = User(id=0,
@@ -68,10 +67,10 @@ class UserService:
                     validated=False)
         if self._user_repository.save(user):
             return BaseResponse(ok=True,
-                                code=UserMessage.USER_CREATED)
+                                msg="Usuário criado com sucesso")
 
         return BaseResponse(ok=False,
-                            code=UserMessage.USER_NOT_CREATED_SAVING_ERROR)
+                            msg="Erro na gravação do usuário")
 
     def is_valid_username(self, username) -> bool:
         """ Username validation:

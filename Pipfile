@@ -16,6 +16,7 @@ config-guiosoft = "*"
 py3-validate-email = "*"
 password-strength = "*"
 escoteiros-mappa = "*"
+email-validator = "*"
 
 [requires]
 python_version = "3.8"
