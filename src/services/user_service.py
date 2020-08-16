@@ -66,6 +66,7 @@ class UserService:
                     creation_date=datetime.now(),
                     validated=False)
         if self._user_repository.save(user):
+            # TODO: Enviar email de validação do usuário
             return BaseResponse(ok=True,
                                 msg="Usuário criado com sucesso")
 
