@@ -11,6 +11,7 @@
         "axios": "^0.19.2",
         "core-js": "^3.6.5",
         "vue": "^2.6.11",
+        "vue-polyglot": "^2.0.1",
         "vue-router": "^3.4.3",
         "vue-simple-alert": "^1.1.1",
         "vuetify": "^2.2.11",

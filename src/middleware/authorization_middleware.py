@@ -9,7 +9,7 @@ from src.domain.entities.user import User
 
 logger = get_logger(__name__)
 
-_noauth_routes = []
+_noauth_routes: set = set()
 
 
 @app.middleware('http')
@@ -48,10 +48,11 @@ async def validate_auth(request: Request, call_next):
     return response
 
 
-def noauth_route(route):
+def noauth_route(*route):
     """ Define route not to be validated on authorization """
     global _noauth_routes
-    _noauth_routes.append(route)
+    _noauth_routes = _noauth_routes.union(route)
+    logger.debug('NOAUTH ROUTES: %s', _noauth_routes)
 
 
 setattr(app, 'noauth_route', noauth_route)

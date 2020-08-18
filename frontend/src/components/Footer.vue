@@ -14,7 +14,7 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn v-for="link in links" :key="link" class="mx-4" dark icon :href="link.url">
+        <v-btn v-for="link in links" :key="link.url" class="mx-4" dark icon :href="link.url">
           <v-icon size="24px" :title="link.title">{{ link.icon }}</v-icon>
         </v-btn>
       </v-card-title>

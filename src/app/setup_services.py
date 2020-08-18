@@ -5,7 +5,8 @@ from src.app import get_logger
 from src.app.config import Config
 from src.app.db_connection import DBConnection
 from src.app.static_files import setup_static_files
-from src.repositories import UserRepository
+from src.repositories import AtividadeRepository, UserRepository
+from src.services.atividade_service import AtividadeService
 from src.services.authorization_service import AuthorizationService
 from src.services.cache_memory_service import CacheMemoryService
 from src.services.mailer_service import MailerService
@@ -35,6 +36,10 @@ def setup(app: FastAPI):
     authorization_service = AuthorizationService(
         cache_service, user_service, config)
     setattr(app, 'AUTH', authorization_service)
+
+    atividade_repository = AtividadeRepository(db_connection)
+    atividade_service = AtividadeService(atividade_repository)
+    setattr(app, 'ATV', atividade_service)
 
     app.add_middleware(
         CORSMiddleware,
