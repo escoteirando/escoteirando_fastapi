@@ -10,11 +10,10 @@
 import { mapGetters } from "vuex";
 export default {
   computed: {
-    ...mapGetters("auth", ["getUser"]),
-    ...mapGetters('backend',['getHost']),
+    ...mapGetters("backend", ["getUser", "getHost"]),
     swagger() {
-      return this.getHost+'/docs'
-    }
+      return this.getHost + "/docs";
+    },
   },
 };
 </script>

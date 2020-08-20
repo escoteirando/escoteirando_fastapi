@@ -65,7 +65,12 @@ export default {
         href: "https://scout.org",
         alt: "Scouts Logo",
         title: "Scouts",
-      },
+      },{
+        src:require("../assets/logo_mappa_redondo.svg"),
+        href:"#",
+        alt:"mAPPa logo",
+        title:"mAPPa Adulto"
+      }
     ],
     development: ENVIRONMENT == "DEVELOPMENT",
   }),

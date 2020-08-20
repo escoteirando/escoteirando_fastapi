@@ -9,22 +9,23 @@
         <v-col cols="12" sm="6" md="4">
           <TipoAtividadeSelect v-on:changed="changedTipoAtividade" />
         </v-col>
-        <v-col cols="6" sm="3" md="2">
-          <v-text-field
-            v-model="dur_min"
-            type="number"
-            label="Duração mínima"
-            prepend-icon="mdi-clock-in"
-          />
+
+        <v-col cols="12" sm="6" md="4">
+          <v-label class="pl-0">Duração: {{duracao[0]}} a {{duracao[1]}} min</v-label>
+          
+          <v-range-slider            
+            v-model="duracao"
+            thumb-label
+            :max="120"
+            :min="0"
+            hide-details
+            step="5"
+            ticks
+            class="align-center"
+          >            
+          </v-range-slider>
         </v-col>
-        <v-col cols="6" sm="3" md="2">
-          <v-text-field
-            v-model="dur_max"
-            type="number"
-            label="Duração máxima"
-            prepend-icon="mdi-clock-out"
-          />
-        </v-col>
+        
         <v-col cols="12" sm="6" md="4" v-if="ehAtividadeEducativa">
           <v-text-field v-model="nome" label="Nome" />
         </v-col>
@@ -49,19 +50,22 @@
         <v-col v-if="ehAtividadeEducativa">
           <TipoAreaDesenvSelect v-on:changed="changedAreaDesenv" />
         </v-col>
+        <v-col v-if="ehAtividadeEducativa">
+          <ProgressoesSelect />
+        </v-col>
       </v-row>
     </v-card-text>
   </v-card>
 </template>
 
 <script>
-
 import TipoAtividadeSelect from "./TipoAtividadeSelect";
 import TipoRamoSelect from "./TipoRamoSelect";
 import TipoAreaDesenvSelect from "./TipoAreaDesenvSelect";
+import ProgressoesSelect from "./ProgressoesSelect"
 import { tipos_atividade_educativos } from "../api/consts";
 export default {
-  components: { TipoAtividadeSelect, TipoRamoSelect, TipoAreaDesenvSelect },
+  components: { TipoAtividadeSelect, TipoRamoSelect, TipoAreaDesenvSelect ,ProgressoesSelect},
   props: {
     ramo: {
       type: String,
@@ -77,6 +81,8 @@ export default {
       tipo: null,
       dur_min: 5,
       dur_max: 10,
+      duracao: [5, 20],
+      slider: 40,
       nome: null,
       descricao: null,
       como_avaliar: null,
@@ -100,9 +106,7 @@ export default {
       this.area = value;
     },
   },
-  created() {
-   
-  },
+  created() {},
 };
 </script>
 

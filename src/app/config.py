@@ -14,3 +14,5 @@ class Config(ConfigClass):
     MAILER_SENDER_EMAIL = 'guionardo@gmail.com'
     MAILER_SENDER_NAME = 'Guionardo Furlan'
     MAILER_THROTTLE = 50    # 50 emails por hora
+
+    CACHE_CONFIG = 'sqlite://.cache.sqlite'

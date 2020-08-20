@@ -21,19 +21,20 @@ const routes = [
     { path: '/test', name: 'test', component: Testing }
 ]
 
-const freeRoutes = ['login', 'subscribe', 'reset', 'redefine', 'test','home']
+const freeRoutes = ['login', 'subscribe', 'reset', 'redefine', 'test']
 
 const router = new VueRouter({ routes })
 router.beforeEach((to, from, next) => {
-    const isAuthorized = store.getters["auth/isValid"]
+    const isAuthorized = store.getters["backend/isValid"]
     if ((freeRoutes.indexOf(to.name) >= 0) || isAuthorized) {
         next()
     } else {
-        console.log(`Routing to ${to.name} but not authorized: Redirecting to login`)
-        next({
-            path: '/auth/login',
-            query: { redirect: to.fullPath }
-        })
+        next()
+        // console.log(`Routing to ${to.name} but not authorized: Redirecting to login`)
+        // next({
+        //     path: '/auth/login',
+        //     query: { redirect: to.fullPath }
+        // })
     }
 })
 export default router

@@ -6,3 +6,4 @@ config-guiosoft==0.1.5
 py3-validate-email==0.2.9
 password-strength==0.0.3.post2
 escoteiros-mappa==0.1.1
+cache-guiosoft=0.0.7

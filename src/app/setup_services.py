@@ -8,9 +8,11 @@ from src.app.static_files import setup_static_files
 from src.repositories import AtividadeRepository, UserRepository
 from src.services.atividade_service import AtividadeService
 from src.services.authorization_service import AuthorizationService
-from src.services.cache_memory_service import CacheMemoryService
+# from src.services.cache_memory_service import CacheMemoryService
 from src.services.mailer_service import MailerService
 from src.services.user_service import UserService
+from cache_gs import CacheGS
+from mappa.service.mappa_service import MAPPAService
 
 logger = get_logger(__name__)
 
@@ -23,8 +25,13 @@ def setup(app: FastAPI):
     setattr(app, 'DBCONNECTION', db_connection)
 
     setup_static_files(app)
-    cache_service = CacheMemoryService()
+
+    cache_service = CacheGS(config.CACHE_CONFIG)
+    # cache_service = CacheMemoryService()
     setattr(app, 'CACHE', cache_service)
+
+    mappa_service = MAPPAService('path://.cache_mappa')
+    setattr(app, 'MAPPA', mappa_service)
 
     mailer_service = MailerService.Instance(config)
     setattr(app, 'MAILER', mailer_service)

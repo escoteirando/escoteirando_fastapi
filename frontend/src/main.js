@@ -21,8 +21,7 @@ new Vue({
     vuetify,
 
     created() {
-        // store.dispatch("auth/do_login", { username: "guionardo", password: "CogitoErgoSum@12$" })
-        store.dispatch("auth/get_login_from_auth")
+        store.dispatch("backend/getAuthFromStorage")
         store.dispatch("consts/update_consts")
     }
 }).$mount('#app')

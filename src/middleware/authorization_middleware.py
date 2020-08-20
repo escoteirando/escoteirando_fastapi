@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 
 from src import app
 from src.app import get_logger
-from src.domain.entities.user import User
+from src.domain.entities.user_authorization import UserAuthorization
 
 logger = get_logger(__name__)
 
@@ -28,19 +28,21 @@ async def validate_auth(request: Request, call_next):
         if authorization in app.USER:
             del(app.USER[authorization])
 
-        user: User = app.AUTH.user_from_authorization(authorization)
-        if not user:
+        user_authorization: UserAuthorization = \
+            app.AUTH.user_from_authorization(authorization)
+
+        if not user_authorization.user:
             return JSONResponse(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 content={"msg": "Invalid or expired authorization"}
             )
-        if not user.active:
+        if not user_authorization.user.active:
             return JSONResponse(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 content={"msg": "Inactive user"}
             )
 
-        app.USER[authorization] = user
+        app.USER[authorization] = user_authorization.user
 
     response = await call_next(request)
     process_time = time.time() - start_time

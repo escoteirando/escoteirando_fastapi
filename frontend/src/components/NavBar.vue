@@ -44,7 +44,7 @@ export default {
     ],
   }),
   computed: {
-    ...mapGetters("auth", ["isValid"]),
+    ...mapGetters("backend", ["isValid"]),
     isEnabledMenu() {
       return this.isValid && this.menu_items.length > 0;
     },

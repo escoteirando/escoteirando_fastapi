@@ -18,11 +18,16 @@ async def login(request: AuthLoginRequest, response: Response):
     else:
         response.status_code = status.HTTP_401_UNAUTHORIZED
 
-    logger.info("Login: %s:***", request.username)
-    return AuthLoginResponse(authorization=auth_response.authorization,
-                             validUntil=auth_response.validUntil,
-                             message=auth_response.message,
-                             user=auth_response.user)
+    try:
+        response = AuthLoginResponse(authorization=auth_response.authorization,
+                                     validUntil=auth_response.validUntil,
+                                     message=auth_response.message,
+                                     user=auth_response.user)
+
+        logger.info("Login: %s:***", request.username)
+        return response
+    except Exception as exc:
+        logger.exception("LOGIN: %s", exc)
 
 
 @app.post("/auth/logout",
@@ -47,6 +52,17 @@ async def get_authorization_data(authorization: str, response: Response):
 
     logger.info("Get Authorization data: %s", authorization)
     return auth_response
+
+    try:
+        response = AuthLoginResponse(authorization=auth_response.authorization,
+                                     validUntil=auth_response.validUntil,
+                                     message=auth_response.message,
+                                     user=auth_response.user)
+
+        logger.info("Login: %s:***", request.username)
+        return response
+    except Exception as exc:
+        logger.exception("LOGIN: %s", exc)
 
 
 @app.post("/auth/subscribe",
