@@ -29,7 +29,8 @@
           color="orange darken-2"
           title="Ambiente de desenvolvimento"
         >mdi-test-tube</v-icon>
-        <v-icon v-else color="green darken-2" title="Ambiente de produção">mdi-check-outline</v-icon>
+        <v-icon v-else color="green darken-2" title="Ambiente de produção">mdi-check-outline</v-icon>&nbsp;|
+        <v-icon v-if="getAuth" :title="getAuth">mdi-account-key</v-icon>
       </v-card-text>
     </v-card>
   </v-footer>
@@ -38,6 +39,7 @@
 <script>
 import ComplianceTextButton from "./ComplianceTextButton";
 import { ENVIRONMENT } from "../api/consts";
+import { mapGetters } from "vuex";
 export default {
   components: { ComplianceTextButton },
   data: () => ({
@@ -65,15 +67,19 @@ export default {
         href: "https://scout.org",
         alt: "Scouts Logo",
         title: "Scouts",
-      },{
-        src:require("../assets/logo_mappa_redondo.svg"),
-        href:"#",
-        alt:"mAPPa logo",
-        title:"mAPPa Adulto"
-      }
+      },
+      {
+        src: require("../assets/logo_mappa_redondo.svg"),
+        href: "#",
+        alt: "mAPPa logo",
+        title: "mAPPa Adulto",
+      },
     ],
     development: ENVIRONMENT == "DEVELOPMENT",
   }),
+  computed: {
+    ...mapGetters("backend", ["getAuth"]),
+  },
 };
 </script>
 

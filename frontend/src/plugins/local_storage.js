@@ -10,8 +10,13 @@ const local_storage_factory = () => {
             try {
                 v = JSON.parse(v)
                 if (v._u <= 0 || v._u > currentTimeStamp()) {
-                    if (v._v) { defaultValue = v._v }
+                    if (v._v) {
+                        defaultValue = v._v
+                    }
+                } else {
+                    deleteValue(key)
                 }
+
             } catch (e) {
                 console.error('[LOCALSTORAGE] Error on getValue', key, e)
             }

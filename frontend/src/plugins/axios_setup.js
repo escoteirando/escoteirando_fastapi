@@ -9,14 +9,15 @@ let config = {
     timeout: APITimeout * 1000
 };
 const _axios = axios.create(config);
+const local_storage = local_storage_factory()
+
 console.debug("AXIOS_SETUP", config)
 window.axios = _axios
 
 _axios.interceptors.request.use(
-    function(cfg) {
+    function (cfg) {        
         if (!cfg.headers.common[AuthHeader]) {
-            let storage = local_storage_factory()
-            let auth = storage.getValue(AuthStorage)
+            let auth = local_storage.getValue(AuthStorage)
 
             if (auth) {
                 cfg.headers.common[AuthHeader] = auth
@@ -30,7 +31,7 @@ _axios.interceptors.request.use(
         }
         return cfg;
     },
-    function(error) {
+    function (error) {
         // Do something with request error
         return Promise.reject(error);
     }
@@ -38,14 +39,13 @@ _axios.interceptors.request.use(
 
 // Add a response interceptor
 _axios.interceptors.response.use(
-    function(response) {
-        // Do something with response data
-        return response;
+    // Do something with response data
+    (response) => {
+        console.log('[AXIOS] response', response)
+        return response
     },
-    function(error) {
-        // Do something with response error
-        return Promise.reject(error);
-    }
+    // Do something with response error
+    (error) => Promise.reject(error)
 );
 
 export {

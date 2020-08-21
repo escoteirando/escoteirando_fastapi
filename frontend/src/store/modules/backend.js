@@ -1,22 +1,10 @@
-import { AuthStorage } from '../../api/consts'
+import { AuthStorage, APIURL } from '../../api/consts'
 import { local_storage_factory } from '../../plugins/local_storage'
 
 const local_storage = local_storage_factory()
 
-const state = {
-    host: "http://localhost:8000",
-    auth: null,
-    validUntil: 0,
-    user: {
-        name: null,
-        email: null,
-        ueb_id: 0,
-        user_mappa: null
-    }
-}
-
 const EMPTY_STATE = {
-    host: "http://localhost:8000",
+    host: APIURL,
     auth: null,
     validUntil: 0,
     user: {
@@ -27,20 +15,7 @@ const EMPTY_STATE = {
     }
 }
 
-const fetchPromise = (_fetch) => {
-    let promise = new Promise((resolve, reject) => {
-        _fetch
-            .then(async response => {
-                let json_response = response.json()
-                if (response.ok) {
-                    return resolve(json_response)
-                }
-                return reject(await json_response)
-            })
-            .catch(error => { reject(error) })
-    })
-    return promise
-}
+const state = EMPTY_STATE
 
 const getters = {
     getAuth: (s) => s.auth,
@@ -48,28 +23,6 @@ const getters = {
     getAuthorization: (s) => s.auth,
     isValid: (s) => s.validUntil > new Date().getTime() / 1000,
     getUser: (s) => s.user,
-    get: (s) => (url, data = null) => {
-        if (data) { url = url + "?" + new URLSearchParams(data).toString() }
-        let _fetch = fetch(s.host + url, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': s.auth
-            }
-        })
-        return fetchPromise(_fetch)
-    },
-    post: (s) => (url, data) => {
-        let _fetch = fetch(s.host + url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': s.auth
-            },
-            body: JSON.stringify(data)
-        })
-        return fetchPromise(_fetch)
-    }
 }
 
 const actions = {
@@ -84,6 +37,8 @@ const actions = {
         console.log('[BACKEND] AUTHORIZATION FOUND', authorization)
         window.axios.post('/auth/user/' + authorization)
             .then(json => {
+                json = json.data
+                console.log('[BACKEND] DATA FROM AUTH', json)
                 commit('SET_LOGIN_DATA', json)
                 dispatch('setAuth', { auth: json.authorization })
             })

@@ -14,19 +14,21 @@ const getters = {
 }
 
 const actions = {
-    update_consts({ commit, rootGetters }) {
+    update_consts({ commit }) {
         let consts = local_storage.getValue('_consts', null)
         if (consts) {
             console.log('[CONSTS] FROM LOCAL STORAGE', consts)
             commit('UPDATE_CONSTS', consts)
         } else {
-            rootGetters['backend/get']('/api/consts')
-                .then(function (consts) {
+            window.axios.get('/api/consts')
+                .then(json => {
+                    const consts = json.data
                     console.log('[CONSTS]', consts)
                     local_storage.setValue('_consts', consts, currentTimeStamp() + 60 * 60)
                     commit('UPDATE_CONSTS', consts)
                 })
                 .catch(error => console.error('[CONSTS]', error))
+
         }
     }
 }
