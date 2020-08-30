@@ -1,5 +1,6 @@
 import { AuthStorage, APIURL } from '../../api/consts'
-import { local_storage_factory } from '../../plugins/local_storage'
+import { local_storage_factory, currentTimeStamp } from '../../plugins/local_storage'
+import router from '../../router'
 
 const local_storage = local_storage_factory()
 
@@ -12,7 +13,8 @@ const EMPTY_STATE = {
         email: null,
         ueb_id: 0,
         user_mappa: null
-    }
+    },
+    healthy: false
 }
 
 const state = EMPTY_STATE
@@ -21,8 +23,9 @@ const getters = {
     getAuth: (s) => s.auth,
     getHost: (s) => s.host,
     getAuthorization: (s) => s.auth,
-    isValid: (s) => s.validUntil > new Date().getTime() / 1000,
+    isLoggedUser: (s) => (s.auth || '').length > 0 && s.validUntil > currentTimeStamp(),
     getUser: (s) => s.user,
+    isHealthy: (s) => s.healthy
 }
 
 const actions = {
@@ -41,6 +44,7 @@ const actions = {
                 console.log('[BACKEND] DATA FROM AUTH', json)
                 commit('SET_LOGIN_DATA', json)
                 dispatch('setAuth', { auth: json.authorization })
+                dispatch('user_menus/load_user_menus', {}, { root: true })
             })
             .catch(error => {
                 local_storage.deleteValue(AuthStorage)
@@ -51,6 +55,20 @@ const actions = {
     set_login_data({ commit }, login_data) {
         commit('SET_LOGIN_DATA', login_data)
     },
+    logout({ commit }) {
+        commit('SET_LOGOUT')
+        router.push({ 'name': 'home' })
+    },
+    checkBackend({ commit }) {
+        window.axios.get('/api/hc')
+            .then(() => {
+                commit('SET_HEALTHY', true)
+            }).catch((error) => {
+                console.error('BACKEND NOT HEALTHY', error)
+                commit('SET_HEALTHY', false)
+            })
+    }
+
 }
 
 const mutations = {
@@ -65,6 +83,20 @@ const mutations = {
         s.user_mappa = login_data.user_mappa
         local_storage.setValue(AuthStorage, login_data.authorization, login_data.validUntil)
         console.log('[BACKEND] SET LOGIN DATA', login_data)
+    },
+    SET_LOGOUT(s) {
+        console.log('[BACKEND] LOGOUT')
+        s.auth = null
+        s.validUntil = 0
+        s.user = {
+            name: null,
+            email: null,
+            ueb_id: 0,
+            user_mappa: null
+        }
+    },
+    SET_HEALTHY(s, healthy) {
+        s.healthy = healthy
     }
 }
 

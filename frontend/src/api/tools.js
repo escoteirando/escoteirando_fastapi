@@ -41,3 +41,11 @@ export const passwordNeeds = (password) => {
 }
 
 export const isValidPassword = (password) => passwordNeeds(password).length == 0
+
+export const dateAsString = (date) => {
+    if (date) {
+        return date.toLocaleDateString()
+    } else {
+        return "00/00/0000"
+    }
+}

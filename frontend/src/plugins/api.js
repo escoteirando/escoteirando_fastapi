@@ -19,14 +19,9 @@ try {
     console.error('ERRO EM API.js', err)
     throw "Deu pau"
 }
-// const _api = {
-//     LOCAL_STORAGE,
-//     AUTH
-// }
 
 
-
-Plugin.install = function(vue) {
+Plugin.install = function (vue) {
     // vue.axios = _axios;
     vue.API = _api
     window.API = _api
@@ -34,8 +29,8 @@ Plugin.install = function(vue) {
     Object.defineProperties(vue.prototype, {
         // axios: {get() { return _axios; } },
         // $axios: {get() { return _axios; } },
-        API: {get() { return _api } },
-        $API: {get() { return _api } }
+        API: { get() { return _api } },
+        $API: { get() { return _api } }
     });
     console.log('[API] INIT', _api)
 };

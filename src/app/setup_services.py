@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from cache_gs import CacheGS
+from mappa.service.mappa_service import MAPPAService
 from src.app import get_logger
 from src.app.config import Config
 from src.app.db_connection import DBConnection
@@ -11,8 +13,6 @@ from src.services.authorization_service import AuthorizationService
 # from src.services.cache_memory_service import CacheMemoryService
 from src.services.mailer_service import MailerService
 from src.services.user_service import UserService
-from cache_gs import CacheGS
-from mappa.service.mappa_service import MAPPAService
 
 logger = get_logger(__name__)
 
@@ -50,7 +50,8 @@ def setup(app: FastAPI):
 
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
+        # allow_origins=['*'],
+        allow_origin_regex='http?://.*',
         allow_methods=["*"],
         allow_headers=["*"]
     )

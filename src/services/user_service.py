@@ -73,6 +73,9 @@ class UserService:
         return BaseResponse(ok=False,
                             msg="Erro na gravação do usuário")
 
+    def save_user(self, user: User) -> bool:
+        return self._user_repository.save(user)
+
     def is_valid_username(self, username) -> bool:
         """ Username validation:
 
@@ -121,7 +124,15 @@ class UserService:
         return user
 
     def get_user_menu(self, user: User) -> List[UserMenuResponse]:
-        return [
-            UserMenuResponse(id=999, text='Sair',
-                             route='/auth/logout', icon='mdi-exit-to-app')
-        ]
+        menus = []
+        menus.append(UserMenuResponse(
+            id=1, text="Perfil", route="/api/user/profile", icon='mdi-person'
+        ))
+        if not user.mappa_user:
+            menus.append(UserMenuResponse(
+                id=888, text="Credenciais mAPPa", route='/auth/mappa'))
+
+        menus.append(UserMenuResponse(id=999, text='Sair',
+                                      route='/auth/logout',
+                                      icon='mdi-exit-to-app'))
+        return menus

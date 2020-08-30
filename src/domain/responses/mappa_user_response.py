@@ -1,3 +1,6 @@
+from datetime import datetime
+from typing import Optional
+
 from pydantic import BaseModel
 
 
@@ -10,3 +13,5 @@ class MAPPAUserResponse(BaseModel):
     cod_regiao: str
     nom_grupo: str
     cod_modalidade: str
+    sexo: Optional[str]
+    data_nascimento: Optional[datetime]

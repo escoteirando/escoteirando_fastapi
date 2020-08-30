@@ -7,5 +7,5 @@ from src.domain.responses.user_menu_response import UserMenuResponse
 
 @app.get('/api/user/menu', response_model=List[UserMenuResponse])
 async def get_menus(request: Request):
-    user = app.USER
-    return app.USER.get_user_menus(user)
+    user = request.scope['USER']
+    return app.USER.get_user_menu(user)

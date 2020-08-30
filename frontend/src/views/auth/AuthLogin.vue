@@ -58,7 +58,7 @@ export default {
       this.API.AUTH.login(this.username, this.password)
         .then((response) => {
           console.log("LOGIN", response);
-          this.$router.push(this.redirect || "/");
+          this.$router.push(this.redirect || "home");
         })
         .catch((error) => {
           this.alertMessage = error.response.data.message;

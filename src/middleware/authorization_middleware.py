@@ -17,36 +17,40 @@ async def validate_auth(request: Request, call_next):
     global _noauth_routes
     start_time = time.time()
 
-    if (request.url.path.startswith('/api') and
-            request.url.path not in _noauth_routes):
-        authorization = request.headers.get('authorization', None)
-        if not authorization:
-            return JSONResponse(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                content={"msg": "Missing authorization header"}
-            )
-        if authorization in app.USER:
-            del(app.USER[authorization])
+    if request.method.upper() == 'OPTIONS' or \
+        request.url.path in _noauth_routes or \
+            not request.url.path.startswith('/api'):
+        response = await call_next(request)
+        response.headers["X-Process-Time"] = str(time.time()-start_time)
+        return response
 
-        user_authorization: UserAuthorization = \
-            app.AUTH.user_from_authorization(authorization)
+    authorization = request.headers.get('authorization', None)
+    if not authorization:
+        logger.warning('MISSING AUTHORIZATION FOR %s', request.url.path)
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"msg": "Missing authorization header"}
+        )
 
-        if not user_authorization.user:
-            return JSONResponse(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                content={"msg": "Invalid or expired authorization"}
-            )
-        if not user_authorization.user.active:
-            return JSONResponse(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                content={"msg": "Inactive user"}
-            )
+    user_authorization: UserAuthorization = \
+        app.AUTH.user_from_authorization(authorization)
 
-        app.USER[authorization] = user_authorization.user
+    if not user_authorization.user:
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"msg": "Invalid or expired authorization"}
+        )
+    if not user_authorization.user.active:
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"msg": "Inactive user"}
+        )
+    request.scope['USER'] = user_authorization.user
 
     response = await call_next(request)
     process_time = time.time() - start_time
     response.headers["X-Process-Time"] = str(process_time)
+
     return response
 
 

@@ -10,7 +10,8 @@
             >A página que você está tentando acessar nunca existiu nessa realidade ou migrou para um universo paralelo.</div>
             <div class="paragraph-text mt-2">
               <br />
-              <br />Tente voltar para a <router-link :to="{name:'home'}">página inicial</router-link> e repetir sua ação. Ou contate o suporte, se necessário.
+              <br />Tente voltar para a
+              <router-link :to="{name:'home'}">página inicial</router-link>&nbsp;e repetir sua ação. Ou contate o suporte, se necessário.
             </div>
           </v-card>
         </v-flex>
