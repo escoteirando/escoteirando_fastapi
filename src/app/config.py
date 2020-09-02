@@ -16,3 +16,7 @@ class Config(ConfigClass):
     MAILER_THROTTLE = 50    # 50 emails por hora
 
     CACHE_CONFIG = 'sqlite://.cache.sqlite'
+
+    BACKEND_HOST = 'http://localhost'
+    BACKEND_PORT = 8000
+    FRONTEND_PORT = 8080

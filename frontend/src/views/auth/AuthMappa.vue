@@ -21,7 +21,8 @@
             Nosso sistema permite que você tenha um acesso mais amigável aos dados da sua seção, que são registrados pelo aplicativo mAPPa Adulto.
             <br />Para tanto, será necessário que você informe suas credenciais utilizadas no mAPPa Adulto.
             <br />
-            <strong>Garantimos que sua senha não será armazenada,</strong> pois o sistema de autenticação é baseado em chaves temporárias. Sua senha será utilizada apenas para o acesso e descartada em seguida.
+            <strong>Garantimos que sua senha não será armazenada,</strong> pois o sistema de autenticação é baseado em chaves temporárias.
+            <br />Sua senha será utilizada apenas para o acesso e descartada em seguida.
             <br />Para mais informações, consulte nosso Termo de Uso e a Política de Privacidade (links no rodapé do site).
           </v-card-text>
         </v-card>
@@ -212,15 +213,20 @@ export default {
     },
     finalizar() {
       const data = {
-        user_id: -1,
-        authentication: "",
-        user_name: "",
-        auth_valid_until: 0,
-        sexo: "",
-        data_nascimento: "",
-        ueb_id: -1,
+        user_id: this.getMappa.user_id,
+        authentication: this.getMappa.authorization,
+        user_name: this.mappa.username,
+        auth_valid_until: this.getMappa.auth_valid_until,
+        sexo: this.getMappa.sexo,
+        data_nascimento: this.getMappa.data_nascimento.toISOString(),
+        ueb_id: this.getMappa.user_id,
       };
       console.log("[MAPPA] FINALIZAR", data);
+      window.axios.post("/api/mappa/save", data).then((response) => {
+        console.log("[MAPPA] ATUALIZOU", response.data);
+        router.push({ name: "home" });
+        router.go();
+      });
     },
     obterSecoes() {
       let data = {
@@ -260,9 +266,9 @@ export default {
           : secao == "Clã Pioneiro"
           ? "pioneiro"
           : "escoteiro";
-      ramo = "../../assets/logo_ramo_" + ramo + ".png"
+      ramo = "../../assets/logo_ramo_" + ramo + ".png";
       console.log("[AUTHMAPPA] getSecaoImg(" + secao + ")", ramo);
-      return ramo
+      return ramo;
     },
   },
 };

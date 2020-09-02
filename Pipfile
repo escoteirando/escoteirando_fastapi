@@ -6,6 +6,7 @@ verify_ssl = true
 [dev-packages]
 flake8 = "*"
 autopep8 = "*"
+vulture = "*"
 
 [packages]
 fastapi = "*"
@@ -14,7 +15,6 @@ aiofiles = "*"
 pymongo = "*"
 config-guiosoft = "*"
 py3-validate-email = "*"
-password-strength = "*"
 escoteiros-mappa = "*"
 email-validator = "*"
 cache-guiosoft = "*"

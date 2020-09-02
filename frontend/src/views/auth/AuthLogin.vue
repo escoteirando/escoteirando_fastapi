@@ -1,13 +1,11 @@
 <template>
   <v-row align="center" justify="center">
-    <v-snackbar v-model="alert" centered multi-line color="error" timeout="5000"
-      >{{ alertMessage }}
+    <v-snackbar v-model="alert" centered multi-line color="error" timeout="5000">
+      {{ alertMessage }}
       <template v-slot:action="{ attrs }">
-        <v-btn dark text v-bind="attrs" @click="alert = false">
-          X
-        </v-btn>
-      </template></v-snackbar
-    >
+        <v-btn dark text v-bind="attrs" @click="alert = false">X</v-btn>
+      </template>
+    </v-snackbar>
     <v-col cols="12" sm="8" md="4">
       <v-card class="elevation-12">
         <v-toolbar color="primary" dark flat>
@@ -31,7 +29,7 @@
           <v-btn text small to="subscribe">Registrar</v-btn>
           <v-btn text small to="reset">Esqueci a senha</v-btn>
           <v-spacer></v-spacer>
-          <v-btn color="primary" @click="doLogin">Login</v-btn>
+          <v-btn color="primary" @click="doLogin" :disabled="!canLogin">Login</v-btn>
         </v-card-actions>
       </v-card>
     </v-col>
@@ -49,9 +47,13 @@ export default {
     alert: false,
     alertMessage: "",
   }),
+  computed: {
+    canLogin() {
+      return this.username && this.password;
+    },
+  },
   mounted() {
     this.redirect = this.$route.query.redirect;
-    // TODO: Utilizar o redirect para rotear para a página anterior ao login
   },
   methods: {
     doLogin() {

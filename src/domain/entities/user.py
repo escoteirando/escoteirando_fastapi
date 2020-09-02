@@ -1,7 +1,9 @@
 from datetime import datetime
-from typing import Optional, Union
+from typing import Union
 
 from pydantic import BaseModel
+
+from ..enums import UserLevel
 
 
 class User(BaseModel):
@@ -19,3 +21,4 @@ class User(BaseModel):
     password_hash: str
     creation_date: datetime
     validated: bool
+    level: UserLevel = UserLevel.normal

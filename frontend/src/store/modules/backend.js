@@ -34,6 +34,8 @@ const actions = {
     getAuthFromStorage({ commit, dispatch }) {
         const authorization = local_storage.getValue(AuthStorage)
         if (!authorization) {
+            commit('SET_LOGIN_DATA', EMPTY_STATE)
+            local_storage.deleteValue(AuthStorage)
             console.log('[BACKEND] NO AUTHORIZATION DATA')
             return
         }
@@ -57,7 +59,8 @@ const actions = {
     },
     logout({ commit }) {
         commit('SET_LOGOUT')
-        router.push({ 'name': 'home' })
+        router.push({ name: 'login' })
+        router.go()
     },
     checkBackend({ commit }) {
         window.axios.get('/api/hc')
@@ -86,6 +89,7 @@ const mutations = {
     },
     SET_LOGOUT(s) {
         console.log('[BACKEND] LOGOUT')
+        local_storage.deleteValue(AuthStorage)
         s.auth = null
         s.validUntil = 0
         s.user = {

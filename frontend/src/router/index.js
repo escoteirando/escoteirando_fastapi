@@ -6,8 +6,6 @@ import AuthSubscribe from '../views/auth/AuthSubscribe'
 import AuthPasswordResetRequest from '../views/auth/AuthPasswordResetRequest'
 import AuthPasswordReset from '../views/auth/AuthPasswordReset'
 import AuthMappa from '../views/auth/AuthMappa'
-import { local_storage_factory } from '../plugins/local_storage'
-import { AuthStorage } from '../api/consts'
 import Testing from '../views/Testing'
 import Error404 from '../views/errors/Error404'
 import ErrorBackend from '../views/errors/ErrorBackend'
@@ -33,7 +31,7 @@ const routes = [
 ]
 
 const freeRoutes = ['login', 'subscribe', 'reset', 'redefine', 'test', '404', 'no_backend']
-const storage = local_storage_factory()
+
 
 const testBackend = async () => {
     try {
@@ -48,8 +46,9 @@ const testBackend = async () => {
     return false;
 }
 
+
 const router = new VueRouter({ routes })
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
     if (to.name != 'no_backend' && !testBackend()) {
         next({
             name: 'no_backend',
@@ -57,27 +56,17 @@ router.beforeEach((to, from, next) => {
         })
         return;
     }
-    const isLoggedUser = storage.getValue(AuthStorage, false)
+    const isLoggedUser = await window.API.AUTH.verifyLoggedUser()
     console.log('[ROUTER] ' + (isLoggedUser ? 'LOGGED' : ''), to)
-    if (isLoggedUser) {
-        if (to.name == 'login') {
-            console.log('[ROUTER] LOGGED USER CANNOT LOGIN AGAIN')
-            next({ name: 'home' })
-            return
-        } else if (to.name != 'mappa') {
-            // const user = store.getters['backend/getUser']
-            // console.log('[ROUTER] user', user)
-            // if (user.ueb_id == 0 && !user.mappa_user) {
-            //     console.log('[ROUTER] ASKING FOR MAPPA USER')
-            //     next({
-            //         name: 'mappa',
-            //         query: { redirect: to.fullPath }
-            //     })
-            //     return
-            // }
-        }
-        next()
 
+    if (isLoggedUser) {
+        if (to.name !== 'login') {
+            next()
+            return
+        }
+        console.log('[ROUTER] LOGGED USER CANNOT LOGIN AGAIN')
+        next({ name: 'home' })
+        return
     }
     else if (freeRoutes.indexOf(to.name) < 0) {
         console.log(`[ROUTER] Routing to ${to.name} but not authorized: Redirecting to login`)

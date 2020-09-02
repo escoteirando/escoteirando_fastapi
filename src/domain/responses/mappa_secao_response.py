@@ -3,5 +3,5 @@ from pydantic import BaseModel
 
 class MAPPASecaoResponse(BaseModel):
     codigo: int
-    nome: str    
+    nome: str
     tipo: str

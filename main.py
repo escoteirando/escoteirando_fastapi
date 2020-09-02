@@ -3,6 +3,7 @@ from fastapi import status
 from fastapi.responses import RedirectResponse
 
 from src import app
+from src.app.config import Config
 from src.controllers import import_controllers
 
 if not import_controllers():
@@ -19,4 +20,5 @@ def read_root():
 
 
 if __name__ == '__main__':
-    uvicorn.run(app, host='0.0.0.0', port=8000)
+    config = Config
+    uvicorn.run(app, host='0.0.0.0', port=config.BACKEND_PORT)

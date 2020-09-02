@@ -78,6 +78,7 @@ def save_user(user_request: MappaUserRequest,
         return
     try:
         user.ueb_id = user_request.ueb_id
+        user.mappa_user = user_request.user_name
         user.mappa_auth = user_request.authentication
         user.mappa_valid_until = user_request.auth_valid_until
         user.sexo = user_request.sexo

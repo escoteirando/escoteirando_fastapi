@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "ca03acb14039e35027afafa0fd7345e1df4f5c43d633eaa871ecf8dfa7cbaf29"
+            "sha256": "7727a88bff0b1e49e3adfbe913fd76873f09f069ba627741acf14cd365c65ce4"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -33,11 +33,11 @@
         },
         "cache-guiosoft": {
             "hashes": [
-                "sha256:6f19846bfbc39fc8a027b9209d74e984488d8d280bb070c749ad7a6054d8c88c",
-                "sha256:cd8b6bd1957dff2dfe77c69e68106824180408c3d3eead9ebfbe9aa27c82b02f"
+                "sha256:58fdc528bc0c8331015e10e811675f5481031d21f7d15f386cf603fda8dceb7f",
+                "sha256:6edda9bb75151c242992ceb07c979844d04826d7baa24d2b37791d2b3b0dce0a"
             ],
             "index": "pypi",
-            "version": "==0.0.6"
+            "version": "==0.0.7"
         },
         "certifi": {
             "hashes": [
@@ -99,11 +99,11 @@
         },
         "fastapi": {
             "hashes": [
-                "sha256:29c12dd0d4ac825d13c2db4762d2863281c18085ae521825829182e977fd25ac",
-                "sha256:d0b3f629f8d165a21ee082bf31e1697c391c1cdf940304408614b5b7c59d1fb3"
+                "sha256:61ed73b4304413a2ea618d1b95ea866ee386e0e62dd8659c4f5059286f4a39c2",
+                "sha256:6cc31bb555dd8ca956d1d227477d661e4ac012337242a41d36214ffbda78bfe9"
             ],
             "index": "pypi",
-            "version": "==0.61.0"
+            "version": "==0.61.1"
         },
         "filelock": {
             "hashes": [
@@ -153,10 +153,10 @@
         },
         "openpyxl": {
             "hashes": [
-                "sha256:6e62f058d19b09b95d20ebfbfb04857ad08d0833190516c1660675f699c6186f",
-                "sha256:d88dd1480668019684c66cfff3e52a5de4ed41e9df5dd52e008cbf27af0dbf87"
+                "sha256:18e11f9a650128a12580a58e3daba14e00a11d9e907c554a17ea016bf1a2c71b",
+                "sha256:f7d666b569f729257082cf7ddc56262431878f602dcc2bc3980775c59439cdab"
             ],
-            "version": "==3.0.4"
+            "version": "==3.0.5"
         },
         "orjson": {
             "hashes": [
@@ -180,14 +180,6 @@
                 "sha256:fa4d5d734e76d9f21a94444fbf1de7eea185b355b324d38c8a7456ce63c3bbeb"
             ],
             "version": "==3.3.1"
-        },
-        "password-strength": {
-            "hashes": [
-                "sha256:6739357c2863d707b7c7f247ff7c6882a70904a18d12c9aaf98f8b95da176fb9",
-                "sha256:bf4df10a58fcd3abfa182367307b4fd7b1cec518121dd83bf80c1c42ba796762"
-            ],
-            "index": "pypi",
-            "version": "==0.0.3.post2"
         },
         "py3-validate-email": {
             "hashes": [
@@ -421,6 +413,14 @@
                 "sha256:bda89d5935c2eac546d648028b9901107a595863cb36bae0c73ac804a9b4ce88"
             ],
             "version": "==0.10.1"
+        },
+        "vulture": {
+            "hashes": [
+                "sha256:933bf7f3848e9e39ecab6a12faa59d5185471c887534abac13baea6fe8138cc2",
+                "sha256:f4b3a422a6cb0285ec9df0ed46241a8577fa53ec3c43f8c70bd2a4d708c95377"
+            ],
+            "index": "pypi",
+            "version": "==2.1"
         }
     }
 }

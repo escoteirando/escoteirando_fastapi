@@ -21,7 +21,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary">Gravar senha</v-btn>
+          <v-btn color="primary" :disabled="!podeGravar" @click="mandaGravar">Gravar senha</v-btn>
         </v-card-actions>
       </v-card>
     </v-col>
@@ -30,24 +30,67 @@
 
 <script>
 import PasswordField from "../../components/PasswordField";
+
 export default {
   components: { PasswordField },
   data: () => ({
     username: "",
     password: "",
+    chave: "",
   }),
+  computed: {
+    podeGravar() {
+      return this.password && this.username && this.chave;
+    },
+  },
   methods: {
     on_password(password) {
       this.password = password;
       console.log("on_password", password);
     },
+    mandaGravar() {
+      const that = this;
+      window.axios
+        .post("/auth/password/reset", {
+          authorization: this.chave,
+          email: this.username,
+          password: this.password,
+        })
+        .then(() => {
+          that.$alert("Senha redefinida com sucesso!").then(() => {
+            that.$router.push("login");
+          });
+        })
+        .catch((error) => {
+          that.$alert("Não foi possível redefinir a senha: " + error.response.data.msg);
+        });
+    },
   },
   created() {
-    let authorization = this.$route.query.authorization;
-    if (!authorization) {
-      alert("Sem autorização");
-      this.$route.push("login");
+    let chave = this.$route.query.chave;
+    const that = this;
+    if (!chave) {
+      this.$alert(
+        "Acesso não autorizado sem uma chave de redefinição de senha!"
+      ).then(function () {
+        that.$router.push("login");
+      });
+      return;
     }
+
+    window.axios
+      .get("/auth/password/" + chave)
+      .then((response) => {
+        that.username = response.data.data.email;
+        that.chave = chave;
+      })
+      .catch(() => {
+        that
+          .$alert("Chave de redefinição inválida ou expirada!")
+          .then(function () {
+            that.$rounter.push("login");
+          });
+      });
     //TODO: Obter autorização de alteração de senha do usuário
   },
 };

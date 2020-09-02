@@ -3,7 +3,9 @@ from fastapi import Response, status
 from src import app
 from src.app import get_logger
 from src.domain.enums import AuthMessage
-from src.domain.requests import AuthLoginRequest, AuthSubscribeRequest
+from src.domain.requests import (AuthLoginRequest, AuthPasswordRedefineRequest,
+                                 AuthPasswordResetRequest,
+                                 AuthSubscribeRequest)
 from src.domain.responses import AuthLoginResponse, BaseResponse
 
 logger = get_logger(__name__)
@@ -59,7 +61,7 @@ async def get_authorization_data(authorization: str, response: Response):
                                      message=auth_response.message,
                                      user=auth_response.user)
 
-        logger.info("Login: %s:***", request.username)
+        logger.info("Login: %s:***", response.user.name)
         return response
     except Exception as exc:
         logger.exception("LOGIN: %s", exc)
@@ -71,3 +73,35 @@ async def get_authorization_data(authorization: str, response: Response):
 async def subscribe(request: AuthSubscribeRequest):
     logger.info("Subscribe: %s", request)
     return app.USER.create_user(request)
+
+
+@app.post("/auth/password/request", status_code=status.HTTP_202_ACCEPTED,
+          response_model=BaseResponse)
+async def request_password_reset(password_reset: AuthPasswordResetRequest):
+    logger.info("Password reset request: %s", password_reset.email)
+    app.USER_PASS.send_password_reset_email(password_reset.email)
+    return BaseResponse(ok=True)
+
+
+@app.get('/auth/password/{key}', status_code=status.HTTP_200_OK,
+         response_model=BaseResponse)
+async def password_check_key(key: str, response: Response):
+    logger.info('Password.Key %s', key)
+    user = app.USER_PASS.validate_password_reset_key(key)
+    if not user:
+        response.status_code = status.HTTP_404_NOT_FOUND
+    else:
+        return BaseResponse(ok=True, data={'email': user.email})
+
+
+@app.post("/auth/password/reset", status_code=status.HTTP_202_ACCEPTED,
+          response_model=BaseResponse)
+async def password_reset(password_reset: AuthPasswordRedefineRequest, response: Response):
+    logger.info("Password redefine request: %s", password_reset.authorization)
+    success, msg = app.USER_PASS.redefine_password(password_reset)
+    if success:
+        response.status_code = status.HTTP_202_ACCEPTED
+        return BaseResponse(ok=True, msg="Senha atualizada com sucesso")
+    else:
+        response.status_code = status.HTTP_401_UNAUTHORIZED
+        return BaseResponse(ok=False, msg=msg)

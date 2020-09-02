@@ -2,56 +2,48 @@ from datetime import datetime
 from hashlib import sha1
 from typing import List
 
-from password_strength import PasswordPolicy
 
 from src.app import get_logger
 from src.domain.entities.user import User
-from src.domain.enums import UserMessage
-from src.domain.requests import AuthSubscribeRequest
-from src.domain.responses import BaseResponse, UserMenuResponse
+from src.domain.enums import UserLevel
+from src.domain.requests import (AuthSubscribeRequest, UserSetPasswordRequest)
+from src.domain.responses import (BaseResponse, UserHomeCardResponse,
+                                  UserMenuResponse)
 from src.repositories import UserRepository
-from src.services.mailer_service import MailerService
+from src.services.user.user_validation_service import UserValidationService
+
 
 logger = get_logger(__name__)
+
+user_validation = UserValidationService.Instance()
 
 
 class UserService:
 
     def __init__(self,
-                 user_repository: UserRepository,
-                 mailer_service: MailerService):
+                 user_repository: UserRepository):
         logger.info('INIT')
         self._user_repository = user_repository
-        self._mailer_service = mailer_service
-        self._password_policy: PasswordPolicy = PasswordPolicy.from_names(
-            length=5,  # min length: 8
-            uppercase=1,  # need min. 2 uppercase letters
-            numbers=1,  # need min. 2 digits
-            special=1,  # need min. 2 special characters
-            # need min. 2 non-letter characters (digits, specials, anything)
-            nonletters=1,
-        )
 
     def create_user(
             self,
             user_request: AuthSubscribeRequest) -> BaseResponse:
         errors = []
-        if not user_request.username:
-            errors.append("Usuário não informado")
-        elif not self.is_valid_username(user_request.username):
-            errors.append("Usuário contém caracteres inválidos")
-        if not user_request.email:
-            errors.append("Email não informado")
-        elif not self._mailer_service.is_valid_email(user_request.email):
-            errors.append("Email inválido")
+        success, msg = user_validation.is_valid_username(user_request.username)
+        if not success:
+            errors.append(msg)
+
+        success, msg = user_validation.is_valid_email(user_request.email)
+        if not success:
+            errors.append(msg)
         else:
             user = self._user_repository.get_user_by_email(user_request.email)
             if user:
                 errors.append("Email já foi registrado por um usuário")
-        if not user_request.password:
-            errors.append("Senha não foi informada")
-        elif self.password_restrictions(user_request.password):
-            errors.append("Senha não atende os padrões de complexidade")
+
+        success, msg = user_validation.is_valid_password(user_request.password)
+        if not success:
+            errors.append(msg)
 
         if errors:
             return BaseResponse(ok=False,
@@ -75,25 +67,6 @@ class UserService:
 
     def save_user(self, user: User) -> bool:
         return self._user_repository.save(user)
-
-    def is_valid_username(self, username) -> bool:
-        """ Username validation:
-
-        * Characters allowed: [a-zA-z0-9.-_]
-        """
-        if not (8 <= len(username) <= 20):
-            # Length: 8 to 20
-            return False
-
-        for c in username:
-            if ('A' <= c <= 'Z' or
-                'a' <= c <= 'z' or
-                '0' <= c <= '9' or
-                    c in ['_', '-', '.']):
-                continue
-            return False
-
-        return True
 
     def password_restrictions(self, password: str) -> str:
         """
@@ -136,3 +109,59 @@ class UserService:
                                       route='/auth/logout',
                                       icon='mdi-exit-to-app'))
         return menus
+
+    def set_password(self, user: User,
+                     password_request: UserSetPasswordRequest) -> (bool, str):
+        command_user = user
+        if user.email == password_request.email:
+            updated_user = user
+        elif user.level is UserLevel.normal:
+            logger.warning(
+                'PASSWORD SETTING FROM NON-ADMIN USER DENIED: %s',
+                command_user.email)
+            return False, "Usuário sem permissão para alterar outro usuário"
+        else:
+            updated_user = self.get_user_by_email(password_request.email)
+            if not updated_user:
+                logger.warning(
+                    'PASSWORD SETTING FOR NOT FOUND USER: %s - CALLED BY %s',
+                    password_request.email,
+                    command_user.email)
+                return False, "Usuário não encontrado"
+
+        password_restrictions = self.password_restrictions(
+            password_request.password)
+        if password_restrictions:
+            logger.warning('PASSWORD SETTING NOT SET FOR USER %s: %s - CALLED BY %s',
+                           password_request.email,
+                           password_restrictions,
+                           command_user.email)
+            return False, "Senha não atende padrão de complexidade"
+
+        updated_user.password_hash = self._password_hash(
+            password_request.password)
+        if not self.save_user(updated_user):
+            logger.warning('CANNOT SAVE USER %s FOR NEW PASSWORD - CALLED BY %s',
+                           password_request.email,
+                           command_user.email)
+            return False, "Erro ao gravar usuário"
+
+        logger.info('PASSWORD UPDATED FOR USER %s - CALLED BY %s',
+                    password_request.email,
+                    command_user.email)
+        return True, "Senha atualizada com sucesso"
+
+    def get_user_home_cards(self, user: User):
+        cards = []
+        if user.mappa_user:
+            cards.append(UserHomeCardResponse(title="Minha seção",
+                                              route="mappa_secao",
+                                              subtitle="Informações sobre a seção"))
+        cards.append(UserHomeCardResponse(title="Minhas atividades",
+                                          route="minhas_atividades",
+                                          subtitle="Atividades que criei"))
+        cards.append(UserHomeCardResponse(title="Perfil",
+                                          route="profile",
+                                          subtitle="Minhas informações"))
+
+        return cards

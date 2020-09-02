@@ -2,11 +2,9 @@ import math
 import smtplib
 import ssl
 import time
-import re
+from email.mime.text import MIMEText
 from queue import Queue
 from threading import Thread
-from email_validator import validate_email, EmailNotValidError
-
 
 from src.app import get_logger
 from src.cross_cutting import Singleton
@@ -38,13 +36,10 @@ class MailerService:
     def send_mail_smtp(self, to_email: str, subject: str, body: str):
         success = False
         try:
-            email_text = "\n".join([
-                'From: '+self.sender_email,
-                'To: '+to_email,
-                'Subject: '+subject,
-                '',
-                body
-            ])
+            msg = MIMEText(body)
+            msg['Subject'] = subject
+            msg['From'] = self.sender_email
+            msg['To'] = to_email
 
             # Create a secure SSL context
             context = ssl.create_default_context()
@@ -54,7 +49,8 @@ class MailerService:
                 server.ehlo()
 
                 server.login(self.smtp_user, self.smtp_pass)
-                server.sendmail(self.sender_email, to_email, email_text)
+                server.send_message(msg)
+                # server.sendmail(self.sender_email, to_email, email_text)
             success = True
         except Exception as exc:
             logger.error('Error sending email: %s', exc)
@@ -103,17 +99,3 @@ class MailerService:
                 logger.warning('Sent %s emails and %s failed',
                                sent_error+sent_ok, sent_error)
             self.is_sending = False
-
-    def is_valid_email(self, email) -> bool:
-        try:
-            # Validate.
-            valid = validate_email(email)
-            logger.debug('Valid email: %s = %s', email, valid.email)
-
-            # Update with the normalized form.
-            email = valid.email
-            return True
-        except EmailNotValidError as e:
-            # email is not valid, exception message is human-readable
-            logger.warning('Invalid email: %s %s', email, str(e))
-        return False
