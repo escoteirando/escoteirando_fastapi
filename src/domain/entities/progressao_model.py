@@ -16,16 +16,16 @@ class ProgressaoModel(BaseModel):
 
     @property
     def ramo(self):
-        """ Retorna o tipo do ramo da progressão
+        """Retorna o tipo do ramo da progressão
 
         A = Alcatéia, E = Escoteiro, S = Sênior, P = Pioneiro"""
         if self.codigoCaminho in [1, 2, 3]:
-            return 'A'
+            return "A"
         elif self.codigoCaminho in [4, 5, 6]:
-            return 'E'
+            return "E"
         elif self.codigoCaminho in [11, 12]:
-            return 'S'
+            return "S"
         elif self.codigoCaminho in [15, 16]:
-            return 'P'
+            return "P"
 
-        return '_'
+        return "_"

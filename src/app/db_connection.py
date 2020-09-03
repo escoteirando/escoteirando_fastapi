@@ -13,25 +13,20 @@ logger = get_logger(__name__)
 
 
 class DBConnection:
-
     def __init__(self, config):
         if not config.MONGODB_URI:
-            raise DBConnectionException(
-                "Missing MONGODB_URI environment variable")
+            raise DBConnectionException("Missing MONGODB_URI environment variable")
 
         self._client = MongoClient(config.MONGODB_URI)
         try:
             info = self._client.server_info()
             logger.debug(info)
             self._database_name = config.MONGODB_DATABASE
-            self._database: Database = self._client.get_database(
-                self._database_name)
+            self._database: Database = self._client.get_database(self._database_name)
         except Exception as exc:
-            raise DBConnectionException(
-                "Error on connecting to MongoDB", str(exc))
+            raise DBConnectionException("Error on connecting to MongoDB", str(exc))
         if not self._database_name:
-            raise DBConnectionException(
-                "Missing MONGODB_DATABASE environment variable")
+            raise DBConnectionException("Missing MONGODB_DATABASE environment variable")
 
         self._collections = {}
 
@@ -41,14 +36,14 @@ class DBConnection:
 
     def update_running(self):
         unique_repo = UniqueDataRepository.Instance(self)
-        running_data = unique_repo.get('running') or {
+        running_data = unique_repo.get("running") or {
             "install": datetime.datetime.utcnow(),
             "last_run": datetime.datetime.utcnow(),
-            "start_count": 0
+            "start_count": 0,
         }
-        running_data['last_run'] = datetime.datetime.utcnow()
-        running_data['start_count'] += 1
-        unique_repo.set('running', running_data)
+        running_data["last_run"] = datetime.datetime.utcnow()
+        running_data["start_count"] += 1
+        unique_repo.set("running", running_data)
 
     @property
     def client(self) -> MongoClient:
@@ -58,8 +53,9 @@ class DBConnection:
     def database(self) -> Database:
         return self._database
 
-    def collection(self, collection_name,
-                   index_defs: List[IndexModel] = None) -> Collection:
+    def collection(
+        self, collection_name, index_defs: List[IndexModel] = None
+    ) -> Collection:
         if collection_name not in self._collections:
             col = Collection(self._database, collection_name)
             if isinstance(index_defs, list):

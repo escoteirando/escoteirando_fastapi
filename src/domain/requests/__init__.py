@@ -1,6 +1,11 @@
-__all__ = ['AuthLoginRequest', 'AuthSubscribeRequest',
-           'MappaUserRequest', 'UserSetPasswordRequest',
-           'AuthPasswordResetRequest', 'AuthPasswordRedefineRequest']
+__all__ = [
+    "AuthLoginRequest",
+    "AuthSubscribeRequest",
+    "MappaUserRequest",
+    "UserSetPasswordRequest",
+    "AuthPasswordResetRequest",
+    "AuthPasswordRedefineRequest",
+]
 
 from .auth_login_request import AuthLoginRequest
 from .auth_password_redefine_request import AuthPasswordRedefineRequest

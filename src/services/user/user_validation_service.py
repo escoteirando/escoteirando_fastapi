@@ -1,4 +1,8 @@
-from email_validator import validate_email, EmailNotValidError
+""" USER VALIDATION SERVICE
+"""
+import email_validator
+from email_validator import EmailNotValidError, validate_email
+
 from src.cross_cutting import Singleton
 
 
@@ -53,7 +57,7 @@ class UserValidationService:
         for c in password:
             if c.isdigit():
                 nu += 1
-            elif c in '!@#$%*()[]{}^~+=-_/*.,\<.>;:?':
+            elif c in r'!@#$%*()[]{}^~+=-_/*.,\<.>;:?':
                 sp += 1
             elif c.isalpha() and c == c.upper():
                 uc += 1
@@ -69,7 +73,8 @@ class UserValidationService:
 
         if sp < self.pass_policy['special']:
             erros.append(
-                f'Mínimo de caracteres especiais: {self.pass_policy["special"]}')
+                'Mínimo de caracteres especiais: {0}'.format(
+                    self.pass_policy["special"])
 
         if nl < self.pass_policy['nonletters']:
             erros.append(

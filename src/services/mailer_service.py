@@ -14,7 +14,6 @@ logger = get_logger(__name__)
 
 @Singleton
 class MailerService:
-
     def __init__(self, config):
         self.smtp_host = config.MAILER_SMTP_HOST
         self.smtp_port = config.MAILER_SMTP_PORT
@@ -23,11 +22,11 @@ class MailerService:
         self.smtp_ssl = config.MAILER_SMTP_SSL
         self.sender_email = config.MAILER_SENDER_EMAIL
         self.sender_name = config.MAILER_SENDER_NAME
-        self.send_interval = math.ceil((60*60)/config.MAILER_THROTTLE)
+        self.send_interval = math.ceil((60 * 60) / config.MAILER_THROTTLE)
         self.email_queue = Queue()
         self.last_sent = 0
         self.is_sending = False
-        logger.info('INIT')
+        logger.info("INIT")
 
     def send(self, to_email: str, subject: str, body: str) -> bool:
         self.email_queue.put((to_email, subject, body))
@@ -37,15 +36,15 @@ class MailerService:
         success = False
         try:
             msg = MIMEText(body)
-            msg['Subject'] = subject
-            msg['From'] = self.sender_email
-            msg['To'] = to_email
+            msg["Subject"] = subject
+            msg["From"] = self.sender_email
+            msg["To"] = to_email
 
             # Create a secure SSL context
             context = ssl.create_default_context()
-            with smtplib.SMTP_SSL(self.smtp_host,
-                                  self.smtp_port,
-                                  context=context) as server:
+            with smtplib.SMTP_SSL(
+                self.smtp_host, self.smtp_port, context=context
+            ) as server:
                 server.ehlo()
 
                 server.login(self.smtp_user, self.smtp_pass)
@@ -53,7 +52,7 @@ class MailerService:
                 # server.sendmail(self.sender_email, to_email, email_text)
             success = True
         except Exception as exc:
-            logger.error('Error sending email: %s', exc)
+            logger.error("Error sending email: %s", exc)
 
         return success
 
@@ -61,9 +60,7 @@ class MailerService:
         if self.is_sending:
             return
         try:
-            send_thread = Thread(
-                target=self.send_all,
-                name="MailerThread")
+            send_thread = Thread(target=self.send_all, name="MailerThread")
 
             send_thread.start()
         except Exception as exc:
@@ -77,9 +74,10 @@ class MailerService:
             while not self.email_queue.empty():
                 wait_interval = time.time() - self.last_sent
                 if wait_interval < self.send_interval:
-                    logger.info('Waiting %s seconds...',
-                                self.send_interval-wait_interval)
-                    time.sleep(self.send_interval-wait_interval)
+                    logger.info(
+                        "Waiting %s seconds...", self.send_interval - wait_interval
+                    )
+                    time.sleep(self.send_interval - wait_interval)
 
                 to_email, subject, body = self.email_queue.get()
                 if self.send_mail_smtp(to_email, subject, body):
@@ -89,13 +87,14 @@ class MailerService:
                 self.last_sent = time.time()
         except Exception as exc:
             sent_error += 1
-            logger.error('Error sending email: %s', exc)
+            logger.error("Error sending email: %s", exc)
         finally:
             if sent_error == 0:
-                logger.info('Sent %s emails', sent_ok)
+                logger.info("Sent %s emails", sent_ok)
             elif sent_ok == 0:
-                logger.error('All %s emails failed to sending', sent_error)
+                logger.error("All %s emails failed to sending", sent_error)
             else:
-                logger.warning('Sent %s emails and %s failed',
-                               sent_error+sent_ok, sent_error)
+                logger.warning(
+                    "Sent %s emails and %s failed", sent_error + sent_ok, sent_error
+                )
             self.is_sending = False

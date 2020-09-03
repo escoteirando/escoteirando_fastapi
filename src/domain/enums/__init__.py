@@ -1,6 +1,11 @@
-__all__ = ['AuthMessage', 'UserMessage',
-           'AreaDesenvolvimento', 'TipoAtividade',
-           'UserLevel', 'TipoAutorizacao']
+__all__ = [
+    "AuthMessage",
+    "UserMessage",
+    "AreaDesenvolvimento",
+    "TipoAtividade",
+    "UserLevel",
+    "TipoAutorizacao",
+]
 
 from .area_desenvolvimento_enum import AreaDesenvolvimento
 from .auth_messages import AuthMessage

@@ -1,6 +1,13 @@
-__all__ = ['AuthLoginResponse', 'AuthSubscribeResponse',
-           'UserMenuResponse', 'UserDataResponse', 'BaseResponse',
-           'MAPPAUserResponse', 'MAPPASecaoResponse', 'UserHomeCardResponse']
+__all__ = [
+    "AuthLoginResponse",
+    "AuthSubscribeResponse",
+    "UserMenuResponse",
+    "UserDataResponse",
+    "BaseResponse",
+    "MAPPAUserResponse",
+    "MAPPASecaoResponse",
+    "UserHomeCardResponse",
+]
 
 from .auth_login_response import AuthLoginResponse
 from .auth_subscribe_response import AuthSubscribeResponse

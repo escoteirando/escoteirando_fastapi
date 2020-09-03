@@ -30,12 +30,13 @@ def update_item(item_id: int, item: Item):
 @app.get("/test/email")
 def send_email():
     mailer = app.MAILER
-    success, msg = user_validation.is_valid_email('guionardo@gmail.com')
+    success, msg = user_validation.is_valid_email("guionardo@gmail.com")
     if not success:
         print(msg)
     else:
-        mailer.send('guionardo@gmail.com',
-                    'Teste de envio', 'Corpo do e-mail\nNova linha')
+        mailer.send(
+            "guionardo@gmail.com", "Teste de envio", "Corpo do e-mail\nNova linha"
+        )
 
 
 @app.get("/test/user/{username}")

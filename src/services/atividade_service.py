@@ -5,6 +5,5 @@ logger = get_logger(__name__)
 
 
 class AtividadeService:
-
     def __init__(self, repository: AtividadeRepository):
         self._repository: AtividadeRepository = repository
