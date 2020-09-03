@@ -1,3 +1,3 @@
 # escoteirando_fastapi
 
-![Pylint](https://github.com/guionardo/escoteirando_fastapi/workflows/Pylint/badge.svg)
+![Linters](https://github.com/guionardo/escoteirando_fastapi/workflows/Linters/badge.svg)
