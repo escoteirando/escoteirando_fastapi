@@ -14,11 +14,9 @@ if not import_controllers():
 @app.get("/")
 def read_root():
     """ Static Root """
-    return RedirectResponse(
-        "/f",
-        status_code=status.HTTP_301_MOVED_PERMANENTLY)
+    return RedirectResponse("/f", status_code=status.HTTP_301_MOVED_PERMANENTLY)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     config = Config
-    uvicorn.run(app, host='0.0.0.0', port=config.BACKEND_PORT)
+    uvicorn.run(app, host="0.0.0.0", port=config.BACKEND_PORT)
