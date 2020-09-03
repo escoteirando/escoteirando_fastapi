@@ -32,3 +32,7 @@ export const tipos_ramos = [
     { id: 'S', text: 'Tropa Sênior' },
     { id: 'C', text: 'Clã Pioneiro' }
 ]
+
+export const ramos = {
+    "A": { text: 'Alcatéia', logo: require('../assets/logo_ramo_lobinho.png') }
+}
