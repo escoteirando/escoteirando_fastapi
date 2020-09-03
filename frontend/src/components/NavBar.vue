@@ -27,7 +27,7 @@ export default {
 
   methods: {
     testClick() {
-      this.$alert("Teste");
+      this.$alert("Teste", "Título", "success");
     },
   },
 };
