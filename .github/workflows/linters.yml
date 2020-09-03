@@ -49,7 +49,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Installing dependencies
-        run: |          
+        run: |
+          cd ./frontend        
           npm ci
           npm run lint
-        working-directory: ./frontend
