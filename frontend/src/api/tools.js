@@ -42,14 +42,8 @@ export const passwordNeeds = (password) => {
 
 export const isValidPassword = (password) => passwordNeeds(password).length == 0
 
-export const dateAsString = (date) => {
-    if (date) {
-        return date.toLocaleDateString()
-    } else {
-        return "00/00/0000"
-    }
-}
-
+export const dateAsString = (date) =>
+    date ? date.toLocaleDateString() : "00/00/0000"
 
 export const checkOnlineStatus = async () => {
     const hosts = ['https://google.com',
