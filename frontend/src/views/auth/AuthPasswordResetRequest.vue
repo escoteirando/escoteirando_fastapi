@@ -40,9 +40,18 @@ export default {
         .then(() => {
           that
             .$alert(
-              "Se o usuário informado existir na nossa base, enviaremos um e-mail com um link de redefinição de senha."
+              "Se o usuário informado existir na nossa base, enviaremos um e-mail com um link de redefinição de senha.",
+              "Sucesso",
+              "success"
             )
             .then(() => that.$router.push("login"));
+        })
+        .catch(() => {
+          that.$alert(
+            "Algo não funcionou como esperado no back-end!",
+            "ERRO",
+            "error"
+          );
         });
     },
   },

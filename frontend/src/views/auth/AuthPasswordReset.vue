@@ -57,12 +57,16 @@ export default {
           password: this.password,
         })
         .then(() => {
-          that.$alert("Senha redefinida com sucesso!").then(() => {
+          that.$alert("Senha redefinida!", "Sucesso!", "success").then(() => {
             that.$router.push("login");
           });
         })
         .catch((error) => {
-          that.$alert("Não foi possível redefinir a senha: " + error.response.data.msg);
+          that.$alert(
+            error.response.data.msg,
+            "Não foi possível redefinir a senha",
+            "warning"
+          );
         });
     },
   },
@@ -71,7 +75,9 @@ export default {
     const that = this;
     if (!chave) {
       this.$alert(
-        "Acesso não autorizado sem uma chave de redefinição de senha!"
+        "Chave de redefinição de senha não foi informada!",
+        "Acesso não autorizado",
+        "warning"
       ).then(function () {
         that.$router.push("login");
       });
@@ -86,12 +92,15 @@ export default {
       })
       .catch(() => {
         that
-          .$alert("Chave de redefinição inválida ou expirada!")
+          .$alert(
+            "Chave de redefinição inválida ou expirada!",
+            "Acesso não autorizado",
+            "warning"
+          )
           .then(function () {
             that.$rounter.push("login");
           });
-      });
-    //TODO: Obter autorização de alteração de senha do usuário
+      });    
   },
 };
 </script>

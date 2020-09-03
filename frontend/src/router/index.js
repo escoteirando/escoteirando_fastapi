@@ -33,13 +33,17 @@ const routes = [
 const freeRoutes = ['login', 'subscribe', 'reset', 'redefine', 'test', '404', 'no_backend']
 
 
-const testBackend = async () => {
+const testBackend = async (to) => {
+    if (to.name == 'no_backend') {
+        return true
+    }
     try {
-        let response = await window.axios.get('/api/hc')
+        let response = await window.axios.get('/api/hc', {}, { timeout: 500 })
         if (response.status == 200) {
             console.log('[BACKEND]', response.data)
             return true;
         }
+        console.log('[BACKEND] TIMEOUT', response)
     } catch (error) {
         console.error("[BACKEND] OFFLINE", error)
     }
@@ -49,7 +53,7 @@ const testBackend = async () => {
 
 const router = new VueRouter({ routes })
 router.beforeEach(async (to, from, next) => {
-    if (to.name != 'no_backend' && !testBackend()) {
+    if (! await testBackend(to)) {
         next({
             name: 'no_backend',
             query: { redirect: to.fullPath }

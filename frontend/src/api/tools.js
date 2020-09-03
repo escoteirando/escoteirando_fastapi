@@ -49,3 +49,19 @@ export const dateAsString = (date) => {
         return "00/00/0000"
     }
 }
+
+
+export const checkOnlineStatus = async () => {
+    const hosts = ['https://google.com',
+        'https://yahoo.com',
+        'https://msn.com']
+
+    try {
+        let p = await Promise.race(hosts.map(x => fetch(x, { method: 'HEAD' })))
+        console.log("ONLINE", p)
+        return true
+    } catch (error) {
+        console.error("[ONLINE] ERROR", error)
+    }
+    return false
+}
