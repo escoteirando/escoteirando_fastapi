@@ -84,7 +84,7 @@
                   <v-text-field v-model="user.grupo" label="Grupo Escoteiro" />
                 </v-col>
                 <v-col cols="12" md="4">
-                  <v-text-field v-model="user.data_nascimento" label="Data de nascimento" />
+                  <v-text-field v-model="user.nascimento" label="Data de nascimento" />
                 </v-col>
               </v-row>
             </v-container>
@@ -155,7 +155,7 @@ export default {
           "Clã Pioneiro",
         ],
         sexo: this.getMappa.sexo,
-        data_nascimento: dateAsString(this.getMappa.data_nascimento),
+        nascimento: dateAsString(this.getMappa.nascimento),
       };
     },
     secoesStr() {
@@ -201,7 +201,7 @@ export default {
           user_name: "",
           auth_valid_until: 0,
           sexo: "",
-          data_nascimento: "",
+          nascimento: "",
           ueb_id: -1,
         };
 
@@ -218,7 +218,7 @@ export default {
         user_name: this.mappa.username,
         auth_valid_until: this.getMappa.auth_valid_until,
         sexo: this.getMappa.sexo,
-        data_nascimento: this.getMappa.data_nascimento.toISOString(),
+        nascimento: this.getMappa.nascimento.toISOString(),
         ueb_id: this.getMappa.user_id,
       };
       console.log("[MAPPA] FINALIZAR", data);

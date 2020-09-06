@@ -74,7 +74,7 @@ class UserValidationService:
         if sp < self.pass_policy['special']:
             erros.append(
                 'Mínimo de caracteres especiais: {0}'.format(
-                    self.pass_policy["special"])
+                    self.pass_policy["special"]))
 
         if nl < self.pass_policy['nonletters']:
             erros.append(

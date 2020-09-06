@@ -5,15 +5,19 @@ import Vue from 'vue'
 import { _axios } from './axios_setup'
 import { local_storage_factory } from './local_storage'
 import { api_auth_factory } from '../api/api_auth'
+import { api_mappa_factory } from '../api/api_mappa'
 
 let _api = {}
 try {
 
     const LOCAL_STORAGE = local_storage_factory()
     const AUTH = api_auth_factory(_axios)
+    const MAPPA = api_mappa_factory(_axios)
+
     _api = {
         LOCAL_STORAGE: LOCAL_STORAGE,
-        AUTH: AUTH
+        AUTH: AUTH,
+        MAPPA: MAPPA
     }
 } catch (err) {
     console.error('ERRO EM API.js', err)

@@ -81,7 +81,7 @@ async def get_authorization_data(authorization: str, response: Response):
 )
 async def subscribe(request: AuthSubscribeRequest):
     logger.info("Subscribe: %s", request)
-    return app.USER.create_user(request)
+    return app.USERS.create_user(request)
 
 
 @app.post(

@@ -16,7 +16,8 @@ const state = {
         nome_completo: null,
         user_id: 0,
         sexo: null,
-        data_nascimento: null
+        nascimento: null,
+        email: null
     },
     secoes: []
 }
@@ -50,8 +51,8 @@ const mutations = {
     SET_MAPPA(s, mappa) {
         // Tratar data de nascimento
         // 1977-02-05T00:00:00+00:00
-        if (mappa.data_nascimento.endsWith('+00:00')) {
-            mappa.data_nascimento = mappa.data_nascimento.replace('+00:00', '-03:00')
+        if (mappa.nascimento.endsWith('+00:00')) {
+            mappa.nascimento = mappa.nascimento.replace('+00:00', '-03:00')
         }
         s.mappa = {
             auth_valid_until: mappa.auth_valid_until,
@@ -63,7 +64,8 @@ const mutations = {
             nome_completo: mappa.nome_completo,
             user_id: mappa.user_id,
             sexo: mappa.sexo,
-            data_nascimento: new Date(mappa.data_nascimento)
+            nascimento: new Date(mappa.nascimento),
+            email: mappa.email
         }
     },
     SET_SECOES(s, secoes) {

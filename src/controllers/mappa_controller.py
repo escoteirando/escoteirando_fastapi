@@ -1,46 +1,84 @@
-import datetime
-from typing import List, Optional
+from typing import List
 
 import dateutil.parser
-from fastapi import Header, Request, Response, status
+from fastapi import Request, Response, status
 
 from mappa.models.internal.user_info import UserInfoModel
 from src import app
 from src.domain.entities.user import User
 from src.domain.requests import AuthLoginRequest, MappaUserRequest
-from src.domain.responses import BaseResponse, MAPPASecaoResponse, MAPPAUserResponse
+from src.domain.responses import BaseResponse
+from src.domain.responses.mappa import (MAPPASecaoResponse,
+                                        MAPPASubsecaoResponse,
+                                        MAPPAUserResponse)
+
+
+def verificar_usuario(request: Request, response: Response, testar_user_id: bool = True):
+    user: User = request.scope["USER"]
+    if not user:
+        response.status_code = status.HTTP_401_UNAUTHORIZED
+        return (None, BaseResponse(ok=False,
+                                   msg="Usuário não está logado"))
+
+    if testar_user_id and user.ueb_id < 1:
+        response.status_code = status.HTTP_401_UNAUTHORIZED
+        return (user, BaseResponse(ok=False,
+                                   msg="Usuário não tem registro de identidade da UEB"))
+
+    return user, None
 
 
 @app.post("/api/mappa/login", response_model=MAPPAUserResponse)
-def login(auth: AuthLoginRequest, response: Response):
-    if not app.MAPPA.login(auth.username, auth.password):
+async def mappa_login(auth: AuthLoginRequest, request: Request, response: Response):
+    user, result = verificar_usuario(request, response, False)
+
+    if not user:
+        return result
+
+    if not app.MAPPA.login(user, auth.username, auth.password):
         response.status_code = status.HTTP_401_UNAUTHORIZED
         return BaseResponse(ok=False)
 
-    user_info: UserInfoModel = app.MAPPA.get_user_info(app.MAPPA.user_id) or {}
+    user_info: UserInfoModel = app.MAPPA.get_user_info(
+        user.ueb_id, user.mappa_auth, user.mappa_valid_until) or {}
 
-    response_data = MAPPAUserResponse(
-        authorization=app.MAPPA.authorization,
-        auth_valid_until=app.MAPPA.auth_valid_until,
-        user_id=app.MAPPA.user_id,
-        nome_completo=user_info.nome_completo,
-        cod_grupo=user_info.cod_grupo,
-        cod_regiao=user_info.cod_regiao,
-        nom_grupo=user_info.nom_grupo,
-        cod_modalidade=user_info.cod_modalidade,
-        sexo=user_info.sexo,
-        data_nascimento=user_info.data_nascimento,
-    )
-
-    return response_data
+    return user_info
 
 
-@app.post("/api/mappa/auth", response_model=MAPPAUserResponse)
+@app.get('/api/mappa/user_info', response_model=MAPPAUserResponse)
+async def mappa_get_user_info(request: Request, response: Response):
+    user, result = verificar_usuario(request, response)
+    if result:
+        return result
+
+    user_info: UserInfoModel = app.MAPPA.get_user_info(
+        user.ueb_id, user.mappa_auth, user.mappa_valid_until)
+
+    return user_info
+
+
+@app.get('/api/mappa/secoes', response_model=List[MAPPASecaoResponse])
+async def mappa_get_secoes(request: Request, response: Response):
+    user, result = verificar_usuario(request, response)
+    if result:
+        return result
+    return app.MAPPA.get_secoes(user)
+
+
+@app.get('/api/mappa/equipe/{codigo_secao}', response_model=List[MAPPASubsecaoResponse])
+async def mappa_get_equipe(request: Request, response: Response):
+    user, result = verificar_usuario(request, response)
+    if result:
+        return result
+    return app.MAPPA.get_equipe(user, request.path_params['codigo_secao'])
+
+
+@ app.post("/api/mappa/auth", response_model=MAPPAUserResponse)
 def auth(user_id: int, authorization: str, auth_valid_until: int, response: Response):
     app.MAPPA.set_authorization(user_id, authorization, auth_valid_until)
 
 
-@app.post("/api/mappa/secoes", response_model=List[MAPPASecaoResponse])
+@ app.post("/api/mappa/secoes", response_model=List[MAPPASecaoResponse])
 def user_info(user_request: MappaUserRequest, response: Response):
     if app.MAPPA.is_authorized(user_request.user_id):
         pass
@@ -68,7 +106,7 @@ def user_info(user_request: MappaUserRequest, response: Response):
     return response
 
 
-@app.post("/api/mappa/save")
+@ app.post("/api/mappa/save")
 def save_user(user_request: MappaUserRequest, request: Request, response: Response):
     user: User = request.scope["USER"]
     if not user:
@@ -81,10 +119,10 @@ def save_user(user_request: MappaUserRequest, request: Request, response: Respon
         user.mappa_valid_until = user_request.auth_valid_until
         user.sexo = user_request.sexo
         try:
-            user.data_nascimento = dateutil.parser.parse(user_request.data_nascimento)
+            user.nascimento = dateutil.parser.parse(user_request.nascimento)
         except:
-            user.data_nascimento = None
-        if app.USER.save_user(user):
+            user.nascimento = None
+        if app.USERS.save_user(user):
             response.status_code = status.HTTP_202_ACCEPTED
         else:
             response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR

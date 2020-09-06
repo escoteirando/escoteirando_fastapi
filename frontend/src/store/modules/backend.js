@@ -9,7 +9,9 @@ const EMPTY_STATE = {
     auth: null,
     validUntil: 0,
     user: {
+        id: 0,
         name: null,
+        full_name: null,
         email: null,
         ueb_id: 0,
         user_mappa: null
@@ -30,7 +32,24 @@ const getters = {
 
 const actions = {
     setHost({ commit }, { host }) { commit('SET_HOST', host) },
-    setAuth({ commit }, { auth }) { commit('SET_AUTH', auth) },
+    setAuth({ commit, dispatch }, { auth }) {
+        const user = {
+            id: auth.user.id,
+            nome_usuario: auth.user.name,
+            nome_completo: auth.user.full_name,
+            email:auth.email,
+            nascimento: null,
+            sexo: null,
+            nivel: null,
+            nome_grupo: null,
+            cod_grupo: null,
+            cod_regiao: null,
+            tipo_sessao: null,
+            nome_sessao: null
+        }
+        dispatch('user/setUser', user, { root: true })
+        commit('SET_AUTH', auth)
+    },
     getAuthFromStorage({ commit, dispatch }) {
         const authorization = local_storage.getValue(AuthStorage)
         if (!authorization) {

@@ -10,7 +10,7 @@ from src.domain.responses import BaseResponse, UserHomeCardResponse, UserMenuRes
 @app.get("/api/user/menu", response_model=List[UserMenuResponse])
 async def get_menus(request: Request):
     user = request.scope["USER"]
-    return app.USER.get_user_menu(user)
+    return app.USERS.get_user_menu(user)
 
 
 @app.post(
@@ -32,4 +32,4 @@ async def set_password(
 @app.get("/api/user/home", response_model=List[UserHomeCardResponse])
 async def get_user_home_cards(request: Request):
     user = request.scope["USER"]
-    return app.USER.get_user_home_cards(user)
+    return app.USERS.get_user_home_cards(user)

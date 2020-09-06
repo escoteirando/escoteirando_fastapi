@@ -9,5 +9,5 @@ class MappaUserRequest(BaseModel):
     auth_valid_until: Optional[int]
 
     sexo: Union[str, None]
-    data_nascimento: Union[str, None]
+    nascimento: Union[str, None]
     ueb_id: Optional[int]

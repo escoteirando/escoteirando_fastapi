@@ -37,3 +37,9 @@ export const ramos = {
     "A": { text: 'Alcatéia', logo: require('../assets/logo_ramo_lobinho.png') },
     "T": { text: 'Tropa Escoteira', logo: require('../assets/logo_ramo_escoteiro.png') }
 }
+
+export const tipo_sexo = {
+    'M': 'Masculino',
+    'F': 'Feminino',
+    'O': 'Outros'
+}

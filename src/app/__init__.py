@@ -9,7 +9,8 @@ from src.app.setup_services import setup
 
 get_logger(__name__).info("INIT APP - %s:%s", __appname__, __version__)
 
-app = FastAPI(title=__appname__, description=__description__, version=__version__)
-
-
-setup(app)
+app = setup(
+    FastAPI(
+        title=__appname__,
+        description=__description__,
+        version=__version__))
