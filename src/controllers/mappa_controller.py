@@ -4,6 +4,7 @@ import dateutil.parser
 from fastapi import Request, Response, status
 
 from mappa.models.internal.user_info import UserInfoModel
+from mappa_api.models import Secao
 from src import app
 from src.domain.entities.user import User
 from src.domain.requests import AuthLoginRequest, MappaUserRequest
@@ -57,7 +58,7 @@ async def mappa_get_user_info(request: Request, response: Response):
     return user_info
 
 
-@app.get('/api/mappa/secoes', response_model=List[MAPPASecaoResponse])
+@app.get('/api/mappa/secoes', response_model=List[Secao])
 async def mappa_get_secoes(request: Request, response: Response):
     user, result = verificar_usuario(request, response)
     if result:

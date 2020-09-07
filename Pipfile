@@ -18,6 +18,7 @@ py3-validate-email = "*"
 escoteiros-mappa = "*"
 email-validator = "*"
 cache-guiosoft = "*"
+mappa-api = "*"
 
 [requires]
 python_version = "3.8"
