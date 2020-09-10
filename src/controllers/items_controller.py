@@ -41,19 +41,19 @@ def send_email():
 
 @app.get("/test/user/{username}")
 def get_user(username):
-    user = app.USER.get_user_by_name(username)
+    user = app.USERS.get_user_by_name(username)
     return user
 
 
 @app.get("/test/user_email/{email}")
 def get_user_email(email):
-    user = app.USER.get_user_by_email(email)
+    user = app.USERS.get_user_by_email(email)
     return user
 
 
 @app.post("/test/usuario", response_model=AuthSubscribeResponse)
 def create_user(user: AuthSubscribeRequest, response: Response):
-    create_response = app.USER.create_user(user)
+    create_response = app.USERS.create_user(user)
     if not create_response.success:
         response.status_code = status.HTTP_400_BAD_REQUEST
     return create_response

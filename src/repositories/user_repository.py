@@ -18,3 +18,6 @@ class UserRepository(BaseRepository):
 
     def get_user_by_name(self, username: str) -> User:
         return self.get_user({"name": username})
+
+    def get_user_by_mappa(self, mappa_user: str) -> User:
+        return self.get_user({"mappa_user": mappa_user})

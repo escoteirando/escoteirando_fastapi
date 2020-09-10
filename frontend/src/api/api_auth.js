@@ -1,16 +1,14 @@
 import store from '../store'
 import { AuthStorage } from './consts'
-import { local_storage_factory } from '../plugins/local_storage'
 
-const storage = local_storage_factory()
 
-export const api_auth_factory = function (axios) {
+export const api_auth_factory = function (axios, storage) {
 
     const login = function (username, password) {
         return new Promise((resolve, reject) => {
             axios.post('/auth/login', { username, password })
                 .then(response => {
-                    store.dispatch('backend/set_login_data', response.data)
+                    store.dispatch('backend/setLoginData', response.data)
                     resolve(response)
                 }).catch(error => {
                     reject(error)
@@ -19,24 +17,40 @@ export const api_auth_factory = function (axios) {
     }
 
     const subscribe = function (username, email, password) {
-        return axios.post('/auth/subscribe', { username, password, email, ueb_id: 0 });
+        return axios.post('/auth/subscribe', { username, password, email });
     }
 
-    const verifyLoggedUser = async function () {
-        await store.dispatch("backend/getAuthFromStorage")
-        const isLoggedUser = storage.getValue(AuthStorage, false)
-        console.debug('[AUTH] verifyLoggedUser', isLoggedUser)
-        return isLoggedUser
+    const verifyLoggedUser = async function (forceFetch = false) {
+        const auth = storage.getValue(AuthStorage, false)
+        if (!auth) {
+            console.log('[API AUTH] verifyLoggedUser', 'NO AUTHORIZATION')
+            return false
+        }
+        let user = store.getters['backend/getUser']
+        if (!user.id || forceFetch) {
+            console.log('[API AUTH] AUTHORIZATION FOUND', auth)
+            try {
+                let json = await axios.post('/auth/user/' + auth)
+                console.log('[API AUTH] verifyLoggedUser post', json)
+                store.dispatch('backend/setLoginData', json.data)
+            } catch (error) {
+                storage.deleteValue(AuthStorage)
+                store.dispatch('backend/clearLogin')
+                console.error('[API AUTH] AUTH ERROR', error)
+                return false
+            }
+        }
+        return true
+
+        // await store.dispatch("backend/getAuthFromStorage")
+        // const isLoggedUser = storage.getValue(AuthStorage, false)
+        // console.debug('[AUTH] verifyLoggedUser', isLoggedUser)
+        // return isLoggedUser
     }
 
     const getLoggedUser = async function () {
-        const auth = storage.getValue(AuthStorage, false)
-        if (!auth) return null
         let user = store.getters['backend/getUser']
-        if (!user) {
-            await store.dispatch("backend/getAuthFromStorage")
-            user = store.getters['backend/getUser']
-        }
+
         return user
     }
 
@@ -44,6 +58,6 @@ export const api_auth_factory = function (axios) {
         login,
         subscribe,
         verifyLoggedUser,
-        getLoggedUser
+        getLoggedUser,
     }
 }

@@ -35,14 +35,15 @@ export default {
     },
   },
   methods: {
-    ...mapActions("user_menus", ["callAction"]),
+    ...mapActions("user_menus", ["callAction", "load_user_menus"]),
     menu_click(item) {
-      this.callAction(item.id);     
+      this.callAction(item.id);
     },
     load_menus() {
       if (!this.isEnabledMenu) {
         return;
       }
+      this.load_user_menus()
       window.axios
         .get("/api/user/menu")
         .then(function (result) {

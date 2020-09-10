@@ -38,29 +38,26 @@ async def login(request: AuthLoginRequest, response: Response):
         logger.exception("LOGIN: %s", exc)
 
 
-@app.post(
-    "/auth/logout", status_code=status.HTTP_202_ACCEPTED, response_model=BaseResponse
-)
+@app.post("/auth/logout", status_code=status.HTTP_202_ACCEPTED,
+          response_model=BaseResponse)
 async def logout(authorization: str):
     logger.info("Logout: %s", authorization)
     app.AUTH.clear_authorizationi(authorization)
     return BaseResponse(ok=True, msg=AuthMessage.LOGOUT)
 
 
-@app.post(
-    "/auth/user/{authorization}",
-    status_code=status.HTTP_202_ACCEPTED,
-    response_model=AuthLoginResponse,
-)
+@app.post("/auth/user/{authorization}",
+          status_code=status.HTTP_202_ACCEPTED,
+          response_model=AuthLoginResponse)
 async def get_authorization_data(authorization: str, response: Response):
-    auth_response: AuthLoginResponse = app.AUTH.get_authorization_data(authorization)
+    auth_response: AuthLoginResponse = app.AUTH.get_authorization_data(
+        authorization)
     if auth_response.authorization:
         response.status_code = status.HTTP_200_OK
     else:
         response.status_code = status.HTTP_401_UNAUTHORIZED
 
-    logger.info("Get Authorization data: %s", authorization)
-    return auth_response
+    logger.info("Get Authorization data: %s", authorization)    
 
     try:
         response = AuthLoginResponse(
@@ -76,12 +73,11 @@ async def get_authorization_data(authorization: str, response: Response):
         logger.exception("LOGIN: %s", exc)
 
 
-@app.post(
-    "/auth/subscribe", status_code=status.HTTP_202_ACCEPTED, response_model=BaseResponse
-)
+@app.post("/auth/subscribe", status_code=status.HTTP_202_ACCEPTED,
+          response_model=BaseResponse)
 async def subscribe(request: AuthSubscribeRequest):
     logger.info("Subscribe: %s", request)
-    return app.USER.create_user(request)
+    return app.USERS.create_user(request)
 
 
 @app.post(

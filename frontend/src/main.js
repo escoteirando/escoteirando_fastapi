@@ -21,7 +21,7 @@ new Vue({
     vuetify,
 
     created() {
-        store.dispatch("backend/getAuthFromStorage")
+        // store.dispatch("backend/getAuthFromStorage")
         store.dispatch("consts/update_consts")
     }
 }).$mount('#app')

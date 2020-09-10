@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "7727a88bff0b1e49e3adfbe913fd76873f09f069ba627741acf14cd365c65ce4"
+            "sha256": "22f532d983b059dc785803fcabd23cb05ef3b86b51c2608c2b8e5c71f69c90c1"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -150,6 +150,14 @@
                 "sha256:472872e096eb8df219c23f2689fc336668bdb43d194094b5cc1707e1640acfc8"
             ],
             "version": "==1.4.1"
+        },
+        "mappa-api": {
+            "hashes": [
+                "sha256:08bc3da9c165054b9236d24b2f071faaf4cc3529b38d4cfe14aa2d99ae79bb8f",
+                "sha256:2acb1d27aee9013de2795cf3eb73f39dbb3c98f7112eb64f6e66107e1dd364ed"
+            ],
+            "index": "pypi",
+            "version": "==0.5.1"
         },
         "openpyxl": {
             "hashes": [

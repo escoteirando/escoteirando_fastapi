@@ -21,22 +21,30 @@ export default {
     },
   },
   async mounted() {
+    console.log("[VIEW HOME] MOUNTED");
     const user = await this.API.AUTH.getLoggedUser();
-    
+
     if (!user) {
       this.$router.push({ name: "login" });
-    } else {
-      console.log("[HOME] user", user);
-      if (user.ueb_id == 0 && !user.user_mappa) {
-        console.log("[HOME] ASKING FOR MAPPA USER");
-        this.$router.push({
-          name: "mappa",
-          query: { redirect: window.location.pathname },
-        });
-        return;
-      }
-      this.LoadUserCards();
+      return;
     }
+    console.log("[HOME] user", user);
+    if (user.ueb_id == 0 && !user.mappa_user) {
+      console.log("[HOME] ASKING FOR MAPPA USER");
+      this.$prompt(
+        "Você deseja integrar as informações do mAPPa Adulto?",
+        "Atenção",
+        "question"
+      ).then(function (r) {
+        if (r) {
+          this.$router.push({
+            name: "mappa",
+            query: { redirect: window.location.pathname },
+          });         
+        }
+      });
+    }
+    this.LoadUserCards();
   },
   methods: {
     LoadUserCards() {

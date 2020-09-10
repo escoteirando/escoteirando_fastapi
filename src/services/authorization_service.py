@@ -36,7 +36,8 @@ class AuthorizationService:
             return new_auth
 
     def user_from_authorization(self, authorization: str) -> UserAuthorization:
-        obj = self._cache.get_value(self.CACHE_SECTION, self._auth_key(authorization))
+        obj = self._cache.get_value(
+            self.CACHE_SECTION, self._auth_key(authorization))
         if obj:
             user, valid_until = obj
             user = User.construct(**user)
@@ -60,13 +61,21 @@ class AuthorizationService:
         auth = self.create_authorizaton(user)
         if not auth:
             return AuthLoginResponse(
-                authorization=None, message="Authorization engine failed", valid_until=0
+                authorization=None,
+                message="Authorization engine failed",
+                valid_until=0
             )
         user_response = UserDataResponse(
+            id=user.id,
             name=user.name,
             email=user.email,
             ueb_id=user.ueb_id,
             mappa_user=user.mappa_user or "",
+            full_name=user.full_name,
+            nascimento=user.nascimento,
+            mappa_auth=user.mappa_auth,
+            mappa_valid_until=user.mappa_valid_until,
+            sexo=user.sexo
         )
         return AuthLoginResponse(
             authorization=auth,
@@ -87,10 +96,16 @@ class AuthorizationService:
             return AuthLoginResponse(
                 authorization=authorization,
                 user=UserDataResponse(
+                    id=user.id,
                     name=user.name,
                     email=user.email,
                     ueb_id=user.ueb_id or 0,
                     mappa_user=user.mappa_user or "",
+                    full_name=user.full_name,
+                    nascimento=user.nascimento,
+                    sexo=user.sexo,
+                    mappa_auth=user.mappa_auth,
+                    mappa_valid_until=user.mappa_valid_until
                 ),
                 message="Authorized",
                 validUntil=valid_until,

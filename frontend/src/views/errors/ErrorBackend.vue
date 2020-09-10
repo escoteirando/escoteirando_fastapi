@@ -99,11 +99,15 @@ export default {
 
       this.$router.push(redirect);
     },
-    doRetry() {
+    async doRetry() {
       this.iteration = 0;
       this.autoRetryCount = 1;
       this.automaticTesting = true;
-      setTimeout(this.doTestBackend, 1000);
+      if (await this.doTestBackend()) {
+        this.backToRoute();
+      } else {
+        setTimeout(this.doTestBackend, 1000);
+      }
     },
     quemEBackend() {
       this.$alert(
