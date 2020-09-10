@@ -17,25 +17,29 @@ from src.domain.responses.mappa import (MAPPASecaoResponse,
 def verificar_usuario(request: Request, response: Response,
                       testar_user_id: bool = True):
     user: User = request.scope["USER"]
+    auth = request.scope["AUTH"]
     if not user:
         response.status_code = status.HTTP_401_UNAUTHORIZED
-        return (None, BaseResponse(ok=False,
-                                   msg="Usuário não está logado"))
+        return (None,
+                BaseResponse(ok=False,
+                             msg="Usuário não está logado"),
+                auth)
 
     if testar_user_id and user.ueb_id < 1:
         response.status_code = status.HTTP_401_UNAUTHORIZED
         return (user,
                 BaseResponse(
                     ok=False,
-                    msg="Usuário não tem registro de identidade da UEB"))
+                    msg="Usuário não tem registro de identidade da UEB"),
+                auth)
 
-    return user, None
+    return user, None, auth
 
 
 @app.post("/api/mappa/login", response_model=MAPPAUserResponse)
 async def mappa_login(auth: AuthLoginRequest,
                       request: Request, response: Response):
-    user, result = verificar_usuario(request, response, False)
+    user, result, authorization = verificar_usuario(request, response, False)
 
     if not user:
         return result
@@ -44,6 +48,8 @@ async def mappa_login(auth: AuthLoginRequest,
         response.status_code = status.HTTP_401_UNAUTHORIZED
         return BaseResponse(ok=False)
 
+    user = app.USERS.get_user_by_name(user.name)
+    app.AUTH.update_user_from_authorization(authorization, user)
     user_info: UserInfoModel = app.MAPPA.get_user_info(user) or {}
 
     return user_info
@@ -51,7 +57,7 @@ async def mappa_login(auth: AuthLoginRequest,
 
 @app.get('/api/mappa/user_info', response_model=MAPPAUserResponse)
 async def mappa_get_user_info(request: Request, response: Response):
-    user, result = verificar_usuario(request, response)
+    user, result, _ = verificar_usuario(request, response)
     if not user:
         return result
 
@@ -62,7 +68,7 @@ async def mappa_get_user_info(request: Request, response: Response):
 
 @app.get('/api/mappa/secoes', response_model=List[Secao])
 async def mappa_get_secoes(request: Request, response: Response):
-    user, result = verificar_usuario(request, response)
+    user, result, _ = verificar_usuario(request, response)
     if result:
         return result
     return app.MAPPA.get_secoes(user)
@@ -71,7 +77,7 @@ async def mappa_get_secoes(request: Request, response: Response):
 @app.get('/api/mappa/equipe/{codigo_secao}',
          response_model=List[MAPPASubsecaoResponse])
 async def mappa_get_equipe(request: Request, response: Response):
-    user, result = verificar_usuario(request, response)
+    user, result, _ = verificar_usuario(request, response)
     if result:
         return result
     return app.MAPPA.get_equipe(user, request.path_params['codigo_secao'])

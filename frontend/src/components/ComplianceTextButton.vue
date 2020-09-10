@@ -9,20 +9,18 @@
         :text="is_text"
         :x-small="is_text"
         v-if="!is_text"
-      >
-        {{ title }}
-      </v-btn>
-      <a v-else v-on="on" dark class="white--text" v-bind="attrs">{{
+      >{{ title }}</v-btn>
+      <a v-else v-on="on" dark class="white--text" v-bind="attrs">
+        {{
         title
-      }}</a>
+        }}
+      </a>
     </template>
     <v-card>
       <v-card-title class="headline">{{ title }}</v-card-title>
-      <v-card-text
-        ><p class="text-caption" v-for="line in text" :key="line">
-          {{ line }}
-        </p></v-card-text
-      >
+      <v-card-text>
+        <p class="text-caption" v-for="line in text" :key="line">{{ line }}</p>
+      </v-card-text>
       <v-card-actions>
         <v-spacer />
         <v-btn text @click="dialog = false">Fechar</v-btn>
@@ -36,15 +34,18 @@ import {
   usage_terms,
   privacy_policy,
   who_are_us,
+  motivo_auth_mappa,
 } from "../assets/compliance_texts";
 export default {
   name: "ComplianceTextButton",
   props: {
     is_text: Boolean,
     document: {
-      validator: function(value) {
+      validator: function (value) {
         return (
-          ["usage_terms", "privacy_policy", "who_are_us"].indexOf(value) !== -1
+          ["usage_terms", "privacy_policy", "who_are_us", "auth_mappa"].indexOf(
+            value
+          ) !== -1
         );
       },
     },
@@ -69,6 +70,9 @@ export default {
     } else if (this.document == "who_are_us") {
       this.title = "Quem somos nós";
       this.text = this.parseText(who_are_us);
+    } else if (this.document == "auth_mappa") {
+      this.title = "Senha para o mAPPa?";
+      this.text = this.parseText(motivo_auth_mappa);
     } else {
       this.title = "Documento inválido";
       this.text = "Invalid document";

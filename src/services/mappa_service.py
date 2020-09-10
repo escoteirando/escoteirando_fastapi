@@ -51,7 +51,7 @@ class MAPPA_Service:
         escotista_service = EscotistaService(mappa)
         escotista = escotista_service.get_escotista(login)
         associado = escotista_service.get_associado(
-            login, escotista.cod_associado)
+            login, escotista.codigoAssociado)
 
         user.sexo = associado.sexo
         user.full_name = escotista.nomeCompleto

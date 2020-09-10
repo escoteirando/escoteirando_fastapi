@@ -35,6 +35,19 @@ class AuthorizationService:
         ):
             return new_auth
 
+    def update_user_from_authorization(self, authorization: str, user: User) -> bool:
+        obj = self._cache.get_value(
+            self.CACHE_SECTION, self._auth_key(authorization))
+        if obj:
+            user_auth = (user.dict(), time.time() +
+                         self._config.AUTHORIZATION_TTL)
+
+            return self._cache.set_value(
+                self.CACHE_SECTION,
+                self._auth_key(authorization),
+                user_auth,
+                self._config.AUTHORIZATION_TTL)
+
     def user_from_authorization(self, authorization: str) -> UserAuthorization:
         obj = self._cache.get_value(
             self.CACHE_SECTION, self._auth_key(authorization))

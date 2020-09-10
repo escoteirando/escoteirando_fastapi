@@ -11,6 +11,7 @@ import Error404 from '../views/errors/Error404'
 import ErrorBackend from '../views/errors/ErrorBackend'
 import UserProfile from '../views/user/UserProfile'
 import MappaSecao from '../views/mappa/MappaSecao'
+import MappaLogin from '../views/mappa/MappaLogin'
 
 // import store from '../store'
 
@@ -27,6 +28,7 @@ const routes = [
     { path: '/auth/mappa', name: 'mappa', component: AuthMappa },
     { path: '/user/profile', name: 'profile', component: UserProfile },
     { path: '/mappa/secao', name: 'mappa_secao', component: MappaSecao },
+    { path: '/mappa/login', name: 'mappa_login', component: MappaLogin },
     { path: '/test', name: 'test', component: Testing },
     { path: '/no_backend', name: 'no_backend', component: ErrorBackend },
     { path: '*', name: '404', component: Error404 }

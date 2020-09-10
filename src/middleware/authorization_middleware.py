@@ -45,10 +45,11 @@ async def validate_auth(request: Request, call_next):
         )
     if not user_authorization.user.active:
         return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED, content={"msg": "Inactive user"}
-        )
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"msg": "Inactive user"})
+            
     request.scope["USER"] = user_authorization.user
-
+    request.scope["AUTH"] = authorization
     response = await call_next(request)
     process_time = time.time() - start_time
     response.headers["X-Process-Time"] = str(process_time)

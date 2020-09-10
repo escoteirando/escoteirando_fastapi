@@ -193,7 +193,7 @@ export default {
         { input: "password" }
       )
         .then((r) => {
-          that.MAPPA.login(that.user.mappa_username, r)
+          that.API.MAPPA.login(that.user.mappa_username, r)
             .then((response) => {
               that.user.email = that.user.email || response.email;
             })
@@ -201,7 +201,8 @@ export default {
               console.error("[USERPROFILE] MAPPA_LOGIN", error);
             });
         })
-        .catch(() => {
+        .catch((error) => {
+          console.error("[USERPROFILE] SENHA MAPPA", error);
           that.$alert("Senha não foi informada!", "Atenção", "warning");
         });
     },
