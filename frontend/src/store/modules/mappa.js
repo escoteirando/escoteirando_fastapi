@@ -17,7 +17,7 @@ const state = {
         user_id: 0,
         sexo: null,
         nascimento: null,
-        email: null
+        mappa_user: null
     },
     secoes: []
 }
@@ -65,7 +65,7 @@ const mutations = {
             user_id: mappa.user_id,
             sexo: mappa.sexo,
             nascimento: new Date(mappa.nascimento),
-            email: mappa.email
+            mappa_user: mappa.mappa_user
         }
     },
     SET_SECOES(s, secoes) {

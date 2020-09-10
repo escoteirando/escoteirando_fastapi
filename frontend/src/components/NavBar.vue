@@ -13,14 +13,16 @@
       <span class="mr-2">Test</span>
       <v-icon>mdi-open-in-new</v-icon>
     </v-btn>
+    <NavBarTestMenu />
     <NavBarUserMenu />
   </v-app-bar>
 </template>
 
 <script>
 import NavBarUserMenu from "./NavBarUserMenu";
+import NavBarTestMenu from "./NavBarTestMenu";
 export default {
-  components: { NavBarUserMenu },
+  components: { NavBarUserMenu, NavBarTestMenu },
   data: () => ({
     scout_logo: require("../assets/scouts_white.svg"),
   }),

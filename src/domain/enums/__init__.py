@@ -5,13 +5,15 @@ __all__ = [
     "TipoAtividade",
     "UserLevel",
     "TipoAutorizacao",
-    "TipoSexo"
+    "TipoSexo",
+    "TipoRamo"
 ]
 
 from .area_desenvolvimento_enum import AreaDesenvolvimento
 from .auth_messages import AuthMessage
 from .tipo_atividade_enum import TipoAtividade
 from .tipo_autorizacao_enum import TipoAutorizacao
+from .tipo_ramo_enum import TipoRamo
+from .tipo_sexo_enum import TipoSexo
 from .user_level import UserLevel
 from .user_messages import UserMessage
-from .tipo_sexo_enum import TipoSexo

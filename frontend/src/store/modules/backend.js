@@ -25,7 +25,7 @@ const getters = {
     getAuth: (s) => s.auth,
     getHost: (s) => s.host,
     getAuthorization: (s) => s.auth,
-    isLoggedUser: (s) => (s.auth || '').length > 0 && s.validUntil > currentTimeStamp(),
+    isLoggedUser: (s) => (s.auth && s.auth.authorization && s.auth.authorization.length > 0 && s.validUntil > currentTimeStamp),
     getUser: (s) => s.user,
     isHealthy: (s) => s.healthy
 }
@@ -37,9 +37,9 @@ const actions = {
             id: auth.user.id,
             nome_usuario: auth.user.name,
             nome_completo: auth.user.full_name,
-            email:auth.email,
-            nascimento: null,
-            sexo: null,
+            email: auth.email,
+            nascimento: auth.user.nascimento,
+            sexo: auth.user.sexo,
             nivel: null,
             nome_grupo: null,
             cod_grupo: null,
@@ -64,7 +64,7 @@ const actions = {
                 json = json.data
                 console.log('[BACKEND] DATA FROM AUTH', json)
                 commit('SET_LOGIN_DATA', json)
-                dispatch('setAuth', { auth: json.authorization })
+                dispatch('setAuth', { auth: json })
                 dispatch('user_menus/load_user_menus', {}, { root: true })
             })
             .catch(error => {
@@ -73,8 +73,12 @@ const actions = {
                 console.error('[BACKEND] AUTH ERROR', error)
             })
     },
-    set_login_data({ commit }, login_data) {
+    setLoginData({ commit }, login_data) {
         commit('SET_LOGIN_DATA', login_data)
+    },
+    clearLogin({ commit }) {
+        console.log('[BACKEND] CLEAR LOGIN')
+        commit('SET_LOGIN_DATA', EMPTY_STATE)
     },
     logout({ commit }) {
         commit('SET_LOGOUT')
@@ -102,7 +106,6 @@ const mutations = {
         s.user = login_data.user
         s.validUntil = login_data.validUntil
         s.ueb_id = login_data.ueb_id
-        s.user_mappa = login_data.user_mappa
         local_storage.setValue(AuthStorage, login_data.authorization, login_data.validUntil)
         console.log('[BACKEND] SET LOGIN DATA', login_data)
     },
@@ -115,7 +118,7 @@ const mutations = {
             name: null,
             email: null,
             ueb_id: 0,
-            user_mappa: null
+            mappa_user: null
         }
     },
     SET_HEALTHY(s, healthy) {

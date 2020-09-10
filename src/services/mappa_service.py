@@ -21,7 +21,7 @@ class MAPPA_Service:
 
     def get_login(self, user: User) -> Login:
         if not user or \
-                user.mappa_valid_until < datetime.now().timestamp:
+                user.mappa_valid_until < datetime.now().timestamp():
             return None
         created = datetime.fromtimestamp(
             user.mappa_valid_until - 86400).strftime('%Y-%m-%dT%H:%M:%S')
@@ -68,7 +68,6 @@ class MAPPA_Service:
         secoes = escotista_service.get_secoes(login)
         return secoes
 
-
         mappa.set_authorization(
             user.ueb_id, user.mappa_auth, user.mappa_valid_until)
         secoes = mappa.get_secoes(user.ueb_id)
@@ -76,33 +75,45 @@ class MAPPA_Service:
             MAPPASecaoResponse(
                 codigo=secao.codigo,
                 nome=secao.nome,
-                tipoSecao={1: 'A', 2: 'T', 3: 'S', 4: 'C'}.get(
+                tipoSecao={1: 'A', 2: 'E', 3: 'S', 4: 'C'}.get(
                     secao.codigoTipoSecao, 'X'),
                 codigoGrupo=secao.codigoGrupo,
                 codigoRegiao=secao.codigoRegiao)
             for secao in secoes]
 
-    def get_user_info(self, user_id, authorization, auth_valid_until):
+    def get_user_info(self, user: User):
+        login = self.get_login(user)
+        if not login:
+            return None
+
         mappa = self._mappa()
-        mappa.set_authorization(user_id, authorization, auth_valid_until)
-        user_info = mappa.get_user_info(user_id, True)
+        escotista_service = EscotistaService(mappa)
+        escotista = escotista_service.get_escotista(login)
+        grupo = escotista_service.get_grupo(
+            login, escotista.codigoGrupo, escotista.codigoRegiao)
+        associado = escotista_service.get_associado(
+            login, escotista.codigoAssociado)
 
         response = MAPPAUserResponse(
-            authorization=user_info['autorizacao'],
-            auth_valid_until=user_info['autorizacao_validade'],
-            user_id=user_id,
-            nome_completo=user_info['nome_completo'],
-            cod_grupo=user_info['cod_grupo'],
-            cod_regiao=user_info['cod_regiao'],
-            nom_grupo=user_info['nom_grupo'],
-            cod_modalidade=user_info['cod_modalidade'],
-            sexo=user_info['sexo'],
-            nascimento=user_info['data_nascimento'])
+            authorization=user.mappa_auth,
+            auth_valid_until=user.mappa_valid_until,
+            user_id=user.ueb_id,
+            nome_completo=escotista.nomeCompleto,
+            cod_grupo=escotista.codigoGrupo,
+            cod_regiao=escotista.codigoRegiao,
+            nom_grupo=grupo.nome,
+            cod_modalidade=associado.codigoRamo,
+            sexo=associado.sexo,
+            nascimento=associado.dataNascimento)
 
         return response
 
     def get_equipe(self, user: User, codigo_secao: int):
+        login = self.get_login(user)
+        if not login:
+            return None
+
         mappa = self._mappa()
-        mappa.set_authorization(
-            user.ueb_id, user.mappa_auth, user.mappa_valid_until)
-        mappa.get_equipe(user_id, cod_secao)
+        escotista_service = EscotistaService(mappa)
+        equipe = escotista_service.get_equipe(login, codigo_secao)
+        return equipe

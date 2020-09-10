@@ -52,15 +52,20 @@ export default {
       return this.username && this.password;
     },
   },
-  mounted() {
+  async mounted() {
     this.redirect = this.$route.query.redirect;
+    const user = await this.API.AUTH.getLoggedUser();
+    console.log("[VIEW LOGIN] MOUNTED", user);
+
+    if (user) {
+      this.goHome();
+    }
   },
   methods: {
     doLogin() {
       this.API.AUTH.login(this.username, this.password)
-        .then((response) => {
-          console.log("LOGIN", response);
-          this.$router.push(this.redirect || "home");
+        .then(() => {
+          this.goHome();
         })
         .catch((error) => {
           this.alertMessage = error.response.data.message;
@@ -69,6 +74,13 @@ export default {
     },
     on_password(password) {
       this.password = password;
+    },
+    goHome() {
+      if (this.redirect) {
+        this.$router.push(this.redirect);
+      } else {
+        this.$router.push({ name: "home" });
+      }
     },
   },
 };

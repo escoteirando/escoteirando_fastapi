@@ -69,7 +69,7 @@ export default {
   props: {
     ramo: {
       type: String,
-      validator: (v) => ["A", "T", "S", "C"].indexOf(v) !== -1,
+      validator: (v) => ["A", "E", "S", "C"].indexOf(v) !== -1,
     },
     showRamo: Boolean,
   },

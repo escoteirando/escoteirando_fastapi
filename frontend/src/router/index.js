@@ -10,6 +10,7 @@ import Testing from '../views/Testing'
 import Error404 from '../views/errors/Error404'
 import ErrorBackend from '../views/errors/ErrorBackend'
 import UserProfile from '../views/user/UserProfile'
+import MappaSecao from '../views/mappa/MappaSecao'
 
 // import store from '../store'
 
@@ -25,6 +26,7 @@ const routes = [
     { path: '/auth/redefine', name: 'redefine', component: AuthPasswordReset },
     { path: '/auth/mappa', name: 'mappa', component: AuthMappa },
     { path: '/user/profile', name: 'profile', component: UserProfile },
+    { path: '/mappa/secao', name: 'mappa_secao', component: MappaSecao },
     { path: '/test', name: 'test', component: Testing },
     { path: '/no_backend', name: 'no_backend', component: ErrorBackend },
     { path: '*', name: '404', component: Error404 }
@@ -61,26 +63,20 @@ router.beforeEach(async (to, from, next) => {
         return;
     }
     const isLoggedUser = await window.API.AUTH.verifyLoggedUser()
-    console.log('[ROUTER] ' + (isLoggedUser ? 'LOGGED' : ''), to)
+    console.log('[ROUTER]', { isLoggedUser, from, to })
 
-    if (isLoggedUser) {
-        if (to.name !== 'login') {
-            next()
-            return
-        }
-        console.log('[ROUTER] LOGGED USER CANNOT LOGIN AGAIN')
-        next({ name: 'home' })
-        return
-    }
-    else if (freeRoutes.indexOf(to.name) < 0) {
+    if (!isLoggedUser && to.name != 'login' && freeRoutes.indexOf(to.name) < 0) {
         console.log(`[ROUTER] Routing to ${to.name} but not authorized: Redirecting to login`)
         next({
             name: 'login',
             query: { redirect: to.fullPath }
         })
-    } else {
-        next()
+        return
+
     }
+
+    next()
+
 
 })
 

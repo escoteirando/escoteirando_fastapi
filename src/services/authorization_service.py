@@ -71,7 +71,11 @@ class AuthorizationService:
             email=user.email,
             ueb_id=user.ueb_id,
             mappa_user=user.mappa_user or "",
-            full_name=user.full_name
+            full_name=user.full_name,
+            nascimento=user.nascimento,
+            mappa_auth=user.mappa_auth,
+            mappa_valid_until=user.mappa_valid_until,
+            sexo=user.sexo
         )
         return AuthLoginResponse(
             authorization=auth,
@@ -92,11 +96,16 @@ class AuthorizationService:
             return AuthLoginResponse(
                 authorization=authorization,
                 user=UserDataResponse(
+                    id=user.id,
                     name=user.name,
                     email=user.email,
                     ueb_id=user.ueb_id or 0,
                     mappa_user=user.mappa_user or "",
-                    full_name=user.full_name
+                    full_name=user.full_name,
+                    nascimento=user.nascimento,
+                    sexo=user.sexo,
+                    mappa_auth=user.mappa_auth,
+                    mappa_valid_until=user.mappa_valid_until
                 ),
                 message="Authorized",
                 validUntil=valid_until,

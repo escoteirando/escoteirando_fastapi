@@ -21,14 +21,13 @@ const getters = {
 
 const actions = {
     setUser({ commit }, user) {
-        console.log('[USER] SET', user)
         commit('SET_USER', user)
     }
 }
 
 const mutations = {
     SET_USER(s, user) {
-        if (user.nascimento.endsWith('+00:00')) {
+        if (user.nascimento && user.nascimento.endsWith('+00:00')) {
             user.nascimento = user.nascimento.replace('+00:00', '-03:00')
         }
         s.nome_usuario = user.nome_usuario
@@ -42,6 +41,7 @@ const mutations = {
         s.cod_regiao = user.cod_regiao
         s.tipo_sessao = user.tipo_sessao
         s.nome_sessao = user.nome_sessao
+        console.log('[STORE USER]', { user: s })
     }
 }
 

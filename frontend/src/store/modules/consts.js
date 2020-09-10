@@ -17,7 +17,7 @@ const actions = {
     update_consts({ commit }) {
         let consts = local_storage.getValue('_consts', null)
         if (consts) {
-            console.log('[CONSTS] FROM LOCAL STORAGE', consts)
+            // console.log('[CONSTS] FROM LOCAL STORAGE', consts)
             commit('UPDATE_CONSTS', consts)
         } else {
             window.axios.get('/api/consts')

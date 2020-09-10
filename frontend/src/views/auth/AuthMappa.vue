@@ -124,6 +124,8 @@ import store from "../../store";
 import { dateAsString } from "../../api/tools";
 import router from "@/router";
 import { mapGetters } from "vuex";
+import { ramos } from "../../api/consts";
+
 export default {
   data() {
     return {
@@ -138,7 +140,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("mappa", ["getMappa", "getSecoes"]),
+    ...mapGetters("mappa", ["getMappa"]),
     user() {
       return {
         nome: this.getMappa.nome_completo,
@@ -161,6 +163,9 @@ export default {
     secoesStr() {
       return this.getSecoes.map((x) => x.tipo + ": " + x.nome).join(", ");
     },
+  },
+  mounted() {
+    console.log("[VIEW AuthMappa] MOUNTED");
   },
   methods: {
     validarMAPPA() {
@@ -235,40 +240,27 @@ export default {
         username: this.mappa.username,
         auth_valid_until: this.getMappa.auth_valid_until,
       };
-      window.axios
-        .post("/api/mappa/secoes", data)
-        .then((resp_sec) => {
-          console.log("MAPPA SECOES", resp_sec);
-          resp_sec.data.forEach((item) => {
-            return {
-              img: this.getSecaoImg(item.tipo),
-              codigo: item.codigo,
-              nome: item.nome,
-              tipo: item.tipo,
-            };
-          });
-          this.secoes = resp_sec.data;
-          store.dispatch("mappa/setSecoes", resp_sec.data);
+
+      console.log("[MAPPA SECOES] OBTER SECOES", data);
+      this.API.MAPPA.getSecoes()
+        .then((data) => {
+          console.log("[MAPPA SECOES]", data);
+          let secoes = [];
+          for (let i = 0; i < data.length; i++) {
+            secoes.push({
+              img: ramos[data[i].codigoTipoSecao].logo,
+              codigo: data[i].codigo,
+              nome: data[i].nome,
+              tipo: ramos[data[i].codigoTipoSecao].text,
+            });
+          }
+
+          this.secoes = secoes;
           this.e1 = 4;
         })
         .catch((error) => {
-          console.error("MAPPA SECOES", error);
+          console.error("[MAPPA SECOES]", error);
         });
-    },
-    getSecaoImg(secao) {
-      let ramo =
-        secao == "Alcatéia"
-          ? "lobinho"
-          : secao == "Tropa Escoteira"
-          ? "escoteiro"
-          : secao == "Tropa Sênior"
-          ? "senior"
-          : secao == "Clã Pioneiro"
-          ? "pioneiro"
-          : "escoteiro";
-      ramo = "../../assets/logo_ramo_" + ramo + ".png";
-      console.log("[AUTHMAPPA] getSecaoImg(" + secao + ")", ramo);
-      return ramo;
     },
   },
 };

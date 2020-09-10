@@ -6,7 +6,7 @@ from typing import List
 from src.app import get_logger
 from src.domain.entities.user import User
 from src.domain.enums import UserLevel
-from src.domain.requests import AuthSubscribeRequest, UserSetPasswordRequest
+from src.domain.requests import AuthSubscribeRequest, UserSetPasswordRequest, UserProfileRequest
 from src.domain.responses import BaseResponse, UserHomeCardResponse, UserMenuResponse
 from src.repositories import UserRepository
 from src.services.user.user_validation_service import UserValidationService
@@ -99,7 +99,8 @@ class UserService:
         )
         if not user.mappa_user:
             menus.append(
-                UserMenuResponse(id=888, text="Credenciais mAPPa", route="/auth/mappa")
+                UserMenuResponse(
+                    id=888, text="Credenciais mAPPa", route="/auth/mappa")
             )
 
         menus.append(
@@ -130,7 +131,8 @@ class UserService:
                 )
                 return False, "Usuário não encontrado"
 
-        password_restrictions = self.password_restrictions(password_request.password)
+        password_restrictions = self.password_restrictions(
+            password_request.password)
         if password_restrictions:
             logger.warning(
                 "PASSWORD SETTING NOT SET FOR USER %s: %s - CALLED BY %s",
@@ -140,7 +142,8 @@ class UserService:
             )
             return False, "Senha não atende padrão de complexidade"
 
-        updated_user.password_hash = self._password_hash(password_request.password)
+        updated_user.password_hash = self._password_hash(
+            password_request.password)
         if not self.save_user(updated_user):
             logger.warning(
                 "CANNOT SAVE USER %s FOR NEW PASSWORD - CALLED BY %s",
@@ -180,3 +183,28 @@ class UserService:
         )
 
         return cards
+
+    def save_profile(self, user: User, profile: UserProfileRequest) -> str:
+        """Grava o perfil do usuário. Retorna vazio se sucesso.
+        Caso contrário retorna motivo da falha"""
+        user2: User = None if not profile.mappa_user else\
+            self._user_repository.get_user_by_mappa(profile.mappa_user)
+        if user2 and user2.id != user.id:
+            return f"Usuário mAPPa '{profile.mappa_user}' está em uso por outro usuário"
+
+        email_valido, motivo = user_validation.is_valid_email(profile.email)
+        if not email_valido:
+            return motivo
+
+        user2 = self.get_user_by_email(profile.email)
+        if user2 and user2.id != user.id:
+            return f"Email {profile.email} está em uso por outro usuário"
+
+        user.mappa_user = profile.mappa_user
+        user.full_name = profile.name
+        user.email = profile.email
+        user.nascimento = profile.nascimento
+        user.sexo = profile.sexo
+        user.ramo = profile.ramo
+
+        return "" if self.save_user(user) else "Erro na gravação do usuário"

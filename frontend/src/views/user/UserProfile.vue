@@ -8,9 +8,9 @@
         <v-card-text>
           <v-form>
             <v-text-field
-              id="user_mappa"
+              id="mappa_user"
               label="Usuário mAPPa"
-              name="user_mappa"
+              name="mappa_user"
               prepend-icon="mdi-account-circle"
               type="text"
               v-model="user.mappa_username"
@@ -31,19 +31,20 @@
               name="email"
               prepend-icon="mdi-at"
               type="email"
+              :rules="rules.email"
               v-model="user.email"
             />
 
             <v-text-field
-              id="birthday"
+              id="nascimento"
               label="Data de nascimento"
-              name="birthday"
+              name="nascimento"
               prepend-icon="mdi-cake"
               type="date"
-              v-model="user.birthday"
-              :rules="rules.birthday"
+              v-model="user.nascimento"
+              :rules="rules.nascimento"
               :readonly="!!user.mappa_username"
-              :hint="user.mappa_username?'Informação obtida do mAPPa':''"
+              :hint="mappaFieldHint"
             />
             <v-select
               id="gender"
@@ -54,6 +55,8 @@
               item-text="text"
               item-value="code"
               v-model="user.gender"
+              :readonly="!!user.mappa_username"
+              :hint="mappaFieldHint"
             />
             <v-select
               id="ramo"
@@ -64,6 +67,8 @@
               item-text="text"
               item-value="id"
               v-model="user.ramo"
+              :readonly="!!user.mappa_username"
+              :hint="mappaFieldHint"
             />
           </v-form>
         </v-card-text>
@@ -99,19 +104,23 @@ export default {
     user: {
       full_name: "",
       email: "",
-      birthday: new Date().toISOString().substring(0, 10),
+      nascimento: new Date().toISOString().substring(0, 10),
       mappa_username: "guionardo",
       gender: "M",
       ramo: "A",
     },
     rules: {
-      birthday: [
+      nascimento: [
         (value) => !!value || "Data de nascimento é requerida",
         (value) =>
           value < aniversarioMaximo ||
           `Você deve ter mais de ${idadeMinima} anos`,
         (value) =>
           value > aniversarioMinimo || `Você deve estar vivo pra continuar`,
+      ],
+      email: [
+        (v) => !!v || "E-mail é obrigatório",
+        (v) => /.+@.+\..+/.test(v) || "E-mail deve ser válido",
       ],
     },
     genders: [
@@ -128,18 +137,47 @@ export default {
     },
     podeGravar() {
       return (
-        this.user.birthday > aniversarioMinimo &&
-        this.user.birthday < aniversarioMaximo
+        this.user.nascimento > aniversarioMinimo &&
+        this.user.nascimento < aniversarioMaximo
       );
+    },
+    mappaFieldHint() {
+      return this.user.mappa_username ? "Informação obtida do mAPPa" : "";
     },
   },
   mounted() {
+    console.log("[UserProfile] mounted");
     this.user.full_name = this.getUser.full_name || this.getUser.name;
     this.user.email = this.getUser.email;
+    this.user.nascimento = this.getUser.nascimento.substring(0, 10);
   },
   methods: {
-    gravar() {
-      console.log("GRAVAR");
+    async gravar() {
+      const profileRequest = {
+        name: this.user.full_name,
+        mappa_user: this.user.mappa_username,
+        email: this.user.email,
+        nascimento: this.user.nascimento,
+        sexo: this.user.gender,
+        ramo: this.user.ramo,
+      };
+      console.log("GRAVAR", profileRequest);
+      let response = await this.API.USER.saveProfile(profileRequest);
+      if (response.ok) {
+        this.$alert(
+          "Dados do usuário foram gravados com sucesso!",
+          "Sucesso",
+          "success"
+        );
+        this.API.AUTH.verifyLoggedUser(true);
+        this.$router.push({ name: "home" });
+      } else {
+        this.$alert(
+          "Dados do usuário não foram gravados: " + response.msg,
+          "Atenção",
+          "error"
+        );
+      }
     },
     loginMappa() {
       const that = this;
@@ -157,9 +195,11 @@ export default {
         .then((r) => {
           that.MAPPA.login(that.user.mappa_username, r)
             .then((response) => {
-              that.user.email = that.user.email || response.email
+              that.user.email = that.user.email || response.email;
             })
-            .catch((error) => {});
+            .catch((error) => {
+              console.error("[USERPROFILE] MAPPA_LOGIN", error);
+            });
         })
         .catch(() => {
           that.$alert("Senha não foi informada!", "Atenção", "warning");
