@@ -74,9 +74,8 @@ class MailerService:
             while not self.email_queue.empty():
                 wait_interval = time.time() - self.last_sent
                 if wait_interval < self.send_interval:
-                    logger.info(
-                        "Waiting %s seconds...", self.send_interval - wait_interval
-                    )
+                    logger.info("Waiting %s seconds...",
+                                self.send_interval - wait_interval)
                     time.sleep(self.send_interval - wait_interval)
 
                 to_email, subject, body = self.email_queue.get()
@@ -94,7 +93,6 @@ class MailerService:
             elif sent_ok == 0:
                 logger.error("All %s emails failed to sending", sent_error)
             else:
-                logger.warning(
-                    "Sent %s emails and %s failed", sent_error + sent_ok, sent_error
-                )
+                logger.warning("Sent %s emails and %s failed",
+                               sent_error + sent_ok, sent_error)
             self.is_sending = False

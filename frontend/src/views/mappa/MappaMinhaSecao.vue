@@ -4,6 +4,7 @@
       <MappaGrupo />
       <MappaSecao />
       <MappaEquipe />
+      <MappaProgressaoSecao />
     </v-row>
   </v-container>
 </template>
@@ -12,8 +13,9 @@
 import MappaGrupo from "../../components/mappa/MappaGrupo";
 import MappaSecao from "../../components/mappa/MappaSecao";
 import MappaEquipe from "../../components/mappa/MappaEquipe";
+import MappaProgressaoSecao from "../../components/mappa/MappaProgressaoSecao";
 export default {
-  components: { MappaGrupo, MappaSecao, MappaEquipe },
+  components: { MappaGrupo, MappaSecao, MappaEquipe, MappaProgressaoSecao },
 };
 </script>
 

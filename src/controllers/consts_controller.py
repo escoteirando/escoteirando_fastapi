@@ -11,7 +11,8 @@ noauth_route("/api/consts")
 @app.get("/api/consts")
 def get_all_consts():
     area_desenv = {
-        x._value_: AreaDesenvolvimento.descricao(x._value_) for x in AreaDesenvolvimento
+        x._value_: AreaDesenvolvimento.descricao(x._value_)
+        for x in AreaDesenvolvimento
     }
     tipo_atividade = {
         x._value_: TipoAtividade.descricao(x._value_) for x in TipoAtividade

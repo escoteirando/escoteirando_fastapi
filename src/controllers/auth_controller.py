@@ -57,7 +57,7 @@ async def get_authorization_data(authorization: str, response: Response):
     else:
         response.status_code = status.HTTP_401_UNAUTHORIZED
 
-    logger.info("Get Authorization data: %s", authorization)    
+    logger.info("Get Authorization data: %s", authorization)
 
     try:
         response = AuthLoginResponse(
@@ -80,20 +80,17 @@ async def subscribe(request: AuthSubscribeRequest):
     return app.USERS.create_user(request)
 
 
-@app.post(
-    "/auth/password/request",
-    status_code=status.HTTP_202_ACCEPTED,
-    response_model=BaseResponse,
-)
+@app.post("/auth/password/request",
+          status_code=status.HTTP_202_ACCEPTED,
+          response_model=BaseResponse)
 async def request_password_reset(password_reset: AuthPasswordResetRequest):
     logger.info("Password reset request: %s", password_reset.email)
     app.USER_PASS.send_password_reset_email(password_reset.email)
     return BaseResponse(ok=True)
 
 
-@app.get(
-    "/auth/password/{key}", status_code=status.HTTP_200_OK, response_model=BaseResponse
-)
+@app.get("/auth/password/{key}",
+         status_code=status.HTTP_200_OK, response_model=BaseResponse)
 async def password_check_key(key: str, response: Response):
     logger.info("Password.Key %s", key)
     user = app.USER_PASS.validate_password_reset_key(key)

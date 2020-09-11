@@ -30,7 +30,7 @@ def setup(app: FastAPI):
     cache_service = CacheGS(config.CACHE_CONFIG)
     # cache_service = CacheMemoryService()
     setattr(app, "CACHE", cache_service)
-    
+
     mailer_service = MailerService.Instance(config)
     setattr(app, "MAILER", mailer_service)
 

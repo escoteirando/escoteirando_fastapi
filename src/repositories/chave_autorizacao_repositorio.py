@@ -7,8 +7,8 @@ from .base_repository import BaseRepository
 class ChaveAutorizacaoRepositorio(BaseRepository):
     def __init__(self, connection):
         super().__init__(
-            connection, collection_name="autorizacao", entity_type=AutorizacaoModel
-        )
+            connection, collection_name="autorizacao",
+            entity_type=AutorizacaoModel)
         self._collection.create_index([("chave", 1)])
 
     def get_autorizacao(self, chave) -> AutorizacaoModel:

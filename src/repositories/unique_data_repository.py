@@ -14,20 +14,22 @@ class UniqueDataRepository:
 
     def set(self, key, value):
         try:
-            result = self._collection.replace_one({"_id": key}, value, upsert=True)
+            result = self._collection.replace_one(
+                {"_id": key}, value, upsert=True)
             return result.upserted_id or result.modified_count
 
         except Exception as exc:
             logger.exception(
-                "Error on setting unique data {0}: {1} - {2}", key, value, exc
-            )
+                "Error on setting unique data {0}: {1} - {2}",
+                key, value, exc)
 
     def get(self, key):
         try:
             result = self._collection.find_one({"_id": key})
             return result
         except Exception as exc:
-            logger.exception("Error on getting unique data {0} - {1}", key, exc)
+            logger.exception("Error on getting unique data {0} - {1}",
+                             key, exc)
 
     def set_values(self, values: list):
         try:

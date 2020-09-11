@@ -2,10 +2,11 @@ from datetime import datetime, timedelta
 from uuid import uuid1
 
 from cache_gs import CacheGS
-from src.app import get_logger, Config
+from src.app import Config, get_logger
 from src.domain.entities.user import User
 from src.domain.enums import UserLevel
-from src.domain.requests import AuthPasswordRedefineRequest, UserSetPasswordRequest
+from src.domain.requests import (AuthPasswordRedefineRequest,
+                                 UserSetPasswordRequest)
 from src.services.mailer_service import MailerService
 from src.services.user.user_validation_service import UserValidationService
 from src.services.user_service import UserService
@@ -15,7 +16,8 @@ validation_service = UserValidationService.Instance()
 
 
 class UserPasswordService:
-    def __init__(self, cache, user_service: UserService, mailer: MailerService):
+    def __init__(self, cache,
+                 user_service: UserService, mailer: MailerService):
 
         self._cache: CacheGS = cache
         self._user_service = user_service
@@ -51,7 +53,8 @@ Esta chave será válida até {3}
             auth,
             (datetime.now() + self._validade_chave).strftime("%d/%m/%Y %H:%M"),
         )
-        self._mailer.send(user.email, "[ESCOTEIRANDO] REDEFINIÇÃO DE SENHA", body)
+        self._mailer.send(
+            user.email, "[ESCOTEIRANDO] REDEFINIÇÃO DE SENHA", body)
 
     def validate_password_reset_key(self, key) -> User:
         user_email = self._cache.get_value("pwd", key, "0")
@@ -63,16 +66,19 @@ Esta chave será válida até {3}
     def redefine_password(
         self, password_redefine: AuthPasswordRedefineRequest
     ) -> (bool, str):
-        user: User = self.validate_password_reset_key(password_redefine.authorization)
+        user: User = self.validate_password_reset_key(
+            password_redefine.authorization)
         if not user:
             return False, "Chave inválida ou expirada"
         if user.email != password_redefine.email:
             return False, "Chave não corresponde ao e-mail informado"
-        success, msg = validation_service.is_valid_password(password_redefine.password)
+        success, msg = validation_service.is_valid_password(
+            password_redefine.password)
         if not success:
             return success, msg
 
-        user.password_hash = UserService._password_hash(password_redefine.password)
+        user.password_hash = UserService._password_hash(
+            password_redefine.password)
         if not self._user_service.save_user(user):
             logger.warning(
                 "CANNOT SAVE USER %s FOR NEW PASSWORD", password_redefine.email
@@ -91,8 +97,8 @@ Esta chave será válida até {3}
             updated_user = user
         elif user.level is UserLevel.normal:
             logger.warning(
-                "PASSWORD SETTING FROM NON-ADMIN USER DENIED: %s", command_user.email
-            )
+                "PASSWORD SETTING FROM NON-ADMIN USER DENIED: %s",
+                command_user.email)
             return False, "Usuário sem permissão para alterar outro usuário"
         else:
             updated_user = self.get_user_by_email(password_request.email)
@@ -104,7 +110,8 @@ Esta chave será válida até {3}
                 )
                 return False, "Usuário não encontrado"
 
-        password_restrictions = self.password_restrictions(password_request.password)
+        password_restrictions = self.password_restrictions(
+            password_request.password)
         if password_restrictions:
             logger.warning(
                 "PASSWORD SETTING NOT SET FOR USER %s: %s - CALLED BY %s",
@@ -114,7 +121,8 @@ Esta chave será válida até {3}
             )
             return False, "Senha não atende padrão de complexidade"
 
-        updated_user.password_hash = self._password_hash(password_request.password)
+        updated_user.password_hash = self._password_hash(
+            password_request.password)
         if not self.save_user(updated_user):
             logger.warning(
                 "CANNOT SAVE USER %s FOR NEW PASSWORD - CALLED BY %s",

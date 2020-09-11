@@ -10,7 +10,8 @@ class CacheMemoryService:
         logger.info("INIT")
         self._values = {}
 
-    def set_value(self, key: str, value: object, ttl_in_seconds: int = 0) -> bool:
+    def set_value(self, key: str,
+                  value: object, ttl_in_seconds: int = 0) -> bool:
         if ttl_in_seconds < 0:
             return False
         self._values[key] = (

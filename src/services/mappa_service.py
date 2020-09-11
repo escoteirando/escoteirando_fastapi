@@ -1,12 +1,11 @@
 from datetime import datetime, timedelta
 from typing import List
 
-import mappa_api
+
 from mappa_api.models import Login, Secao
-from mappa_api.services import MAPPAService, EscotistaService
+from mappa_api.services import BIService, EscotistaService, MAPPAService
 from src.domain.entities.user import User
 from src.domain.responses.mappa import (MAPPASecaoResponse,
-                                        MAPPASubsecaoResponse,
                                         MAPPAUserResponse)
 
 
@@ -117,3 +116,11 @@ class MAPPA_Service:
         escotista_service = EscotistaService(mappa)
         equipe = escotista_service.get_equipe(login, codigo_secao)
         return equipe
+
+    def progressao_mensal_secao(self, user: User, codigo_secao: int):
+        login = self.get_login(user)
+        if not login:
+            return None
+        bi = BIService(self._mappa())
+        progressoes = bi.get_progressao_secao(login, codigo_secao)
+        return progressoes

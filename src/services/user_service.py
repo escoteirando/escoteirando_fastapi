@@ -2,15 +2,15 @@ from datetime import datetime
 from hashlib import sha1
 from typing import List
 
-
 from src.app import get_logger
 from src.domain.entities.user import User
 from src.domain.enums import UserLevel
-from src.domain.requests import AuthSubscribeRequest, UserSetPasswordRequest, UserProfileRequest
-from src.domain.responses import BaseResponse, UserHomeCardResponse, UserMenuResponse
+from src.domain.requests import (AuthSubscribeRequest, UserProfileRequest,
+                                 UserSetPasswordRequest)
+from src.domain.responses import (BaseResponse, UserHomeCardResponse,
+                                  UserMenuResponse)
 from src.repositories import UserRepository
 from src.services.user.user_validation_service import UserValidationService
-
 
 logger = get_logger(__name__)
 
@@ -94,18 +94,21 @@ class UserService:
         menus = []
         menus.append(
             UserMenuResponse(
-                id=1, text="Perfil", route="/api/user/profile", icon="mdi-person"
+                id=1, text="Perfil",
+                route="/api/user/profile", icon="mdi-person"
             )
         )
         if not user.mappa_user:
             menus.append(
                 UserMenuResponse(
-                    id=888, text="Credenciais mAPPa", route="/auth/mappa")
+                    id=888, text="Credenciais mAPPa",
+                    route="/auth/mappa")
             )
 
         menus.append(
             UserMenuResponse(
-                id=999, text="Sair", route="/auth/logout", icon="mdi-exit-to-app"
+                id=999, text="Sair",
+                route="/auth/logout", icon="mdi-exit-to-app"
             )
         )
         return menus
@@ -118,8 +121,8 @@ class UserService:
             updated_user = user
         elif user.level is UserLevel.normal:
             logger.warning(
-                "PASSWORD SETTING FROM NON-ADMIN USER DENIED: %s", command_user.email
-            )
+                "PASSWORD SETTING FROM NON-ADMIN USER DENIED: %s",
+                command_user.email)
             return False, "Usuário sem permissão para alterar outro usuário"
         else:
             updated_user = self.get_user_by_email(password_request.email)

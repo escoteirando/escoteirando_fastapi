@@ -153,7 +153,39 @@ export const api_mappa_factory = function (axios) {
         })
     }
 
+    const fetchProgressoesSecao = function (codigo_secao) {
+        return new Promise((resolve, reject) => {
+            axios.get('/api/mappa/progressao_mensal_secao/' + codigo_secao)
+                .then(response => {
+                    console.log('[API MAPPA] fetchProgressoesSecao(' + codigo_secao + ')', response.data)
+                    resolve(response.data)
+                }).catch(error => {
+                    console.error('[API MAPPA] fetchProgressoesSecao(' + codigo_secao + ')', error)
+                    reject(error)
+                })
+        })
+    }
 
+    const lockPS = new AsyncLock()
+
+    const getProgressoesSecao = async function (codigo_secao) {
+        await lockPS.promise
+        lockPS.enable()
+        let progressoes = null
+        try {
+            progressoes = await window.API.MAPPA.fetchProgressoesSecao(codigo_secao)
+            if (!progressoes || progressoes.length < 1) {
+                progressoes = null
+            } else {
+                console.log('[API MAPPA] PROGRESSOES SECAO (FROM BACKEND)', progressoes)
+            }
+        } catch (error) {
+            console.error('[API MAPPA] PROGRESSOES SECAO', error)
+            progressoes = null
+        }
+        lockPS.disable()
+        return progressoes
+    }
 
     return {
         login,
@@ -163,6 +195,8 @@ export const api_mappa_factory = function (axios) {
         getSecoes,
         getProgressoes,
         getEquipe,
-        fetchEquipe
+        fetchEquipe,
+        fetchProgressoesSecao,
+        getProgressoesSecao
     }
 }

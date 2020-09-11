@@ -47,7 +47,7 @@ async def validate_auth(request: Request, call_next):
         return JSONResponse(
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"msg": "Inactive user"})
-            
+
     request.scope["USER"] = user_authorization.user
     request.scope["AUTH"] = authorization
     response = await call_next(request)

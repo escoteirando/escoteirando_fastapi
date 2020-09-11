@@ -31,7 +31,8 @@ class AutoIncRepository:
         if time_pass.days < 1:
             return
         self.refresh_counters()
-        self._repo.set(self.LAST_CHECK_ID, {self.LAST_CHECK: datetime.datetime.now()})
+        self._repo.set(self.LAST_CHECK_ID, {
+                       self.LAST_CHECK: datetime.datetime.now()})
 
     def refresh_counters(self):
         database: Database = self._connection.database
@@ -41,7 +42,8 @@ class AutoIncRepository:
                 continue
             collection = database.get_collection(collection_name)
             max_id = collection.find_one(sort=[("_id", -1)])["_id"]
-            max_ids.append({"_id": "_ai_" + collection_name, self.LAST_ID: max_id})
+            max_ids.append({"_id": "_ai_" + collection_name,
+                            self.LAST_ID: max_id})
         logger.info("Updating auto_increment counters")
         self._repo.set_values(max_ids)
 

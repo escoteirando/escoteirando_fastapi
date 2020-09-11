@@ -4,6 +4,7 @@ import dateutil.parser
 from fastapi import Request, Response, status
 
 from mappa.models.internal.user_info import UserInfoModel
+from mappa_api.models.export import ProgressaoSecaoArea
 from mappa_api.models import Secao
 from src import app
 from src.domain.entities.user import User
@@ -117,7 +118,19 @@ def user_info(user_request: MappaUserRequest, response: Response):
     return response
 
 
-@ app.post("/api/mappa/save")
+@app.get("/api/mappa/progressao_mensal_secao/{codigo_secao}",
+         response_model=List[ProgressaoSecaoArea])
+def progressao_mensal_secao(codigo_secao: int,
+                            request: Request, response: Response):
+    user, result, _ = verificar_usuario(request, response)
+    if result:
+        return result
+    result = app.MAPPA.progressao_mensal_secao(
+        user, codigo_secao)
+    return result
+
+
+@app.post("/api/mappa/save")
 def save_user(user_request: MappaUserRequest,
               request: Request, response: Response):
     user: User = request.scope["USER"]

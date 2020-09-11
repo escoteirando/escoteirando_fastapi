@@ -14,4 +14,4 @@ class MAPPAUserResponse(BaseModel):
     nom_grupo: str
     cod_modalidade: str
     sexo: Optional[str]
-    nascimento: Optional[datetime]    
+    nascimento: Optional[datetime]

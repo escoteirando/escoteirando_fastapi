@@ -25,6 +25,8 @@ def import_controllers():
         except Exception as exc:
             logger.error("ERROR WHEN LOADING CONTROLLER %s: %s",
                          module, str(exc))
+            print("ERROR WHEN LOADING CONTROLLER {0}: {1}".format(
+                module, str(exc)))
             return False
 
     logger.info("CONTROLLERS: %s", modules)

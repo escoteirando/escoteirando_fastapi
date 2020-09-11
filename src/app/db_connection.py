@@ -15,18 +15,22 @@ logger = get_logger(__name__)
 class DBConnection:
     def __init__(self, config):
         if not config.MONGODB_URI:
-            raise DBConnectionException("Missing MONGODB_URI environment variable")
+            raise DBConnectionException(
+                "Missing MONGODB_URI environment variable")
 
         self._client = MongoClient(config.MONGODB_URI)
         try:
             info = self._client.server_info()
             logger.debug(info)
             self._database_name = config.MONGODB_DATABASE
-            self._database: Database = self._client.get_database(self._database_name)
+            self._database: Database = self._client.get_database(
+                self._database_name)
         except Exception as exc:
-            raise DBConnectionException("Error on connecting to MongoDB", str(exc))
+            raise DBConnectionException(
+                "Error on connecting to MongoDB", str(exc))
         if not self._database_name:
-            raise DBConnectionException("Missing MONGODB_DATABASE environment variable")
+            raise DBConnectionException(
+                "Missing MONGODB_DATABASE environment variable")
 
         self._collections = {}
 
