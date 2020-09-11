@@ -46,3 +46,16 @@ export const tipo_sexo = {
     'F': 'Feminino',
     'O': 'Outros'
 }
+
+export const tipo_membro_equipe = {
+    1: { 1: { 'M': "Primo", 'F': "Prima" }, 2: { 'M': "Segundo", 'F': 'Segunda' }, 0: { 'M': "Lobo", 'F': 'Loba' } },
+    2: {
+        1: { 'M': "Monitor", 'F': 'Monitora' }, 2: { 'M': "Submonitor", 'F': 'Submonitora', 0: { 'M': "Patrulheiro", 'F': 'Patrulheira' } }
+    },
+    3: {
+        1: { 'M': "Monitor", 'F': 'Monitora' }, 2: { 'M': "Submonitor", 'F': 'Submonitora', 0: { 'M': "Patrulheiro", 'F': 'Patrulheira' } }
+    },
+    4: {
+        1: { 'M': "Monitor", 'F': 'Monitora' }, 2: { 'M': "Submonitor", 'F': 'Submonitora', 0: { 'M': "Patrulheiro", 'F': 'Patrulheira' } },
+    }
+}

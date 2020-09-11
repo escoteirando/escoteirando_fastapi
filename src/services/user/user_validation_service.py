@@ -1,6 +1,6 @@
 """ USER VALIDATION SERVICE
 """
-import email_validator
+
 from email_validator import EmailNotValidError, validate_email
 
 from src.cross_cutting import Singleton

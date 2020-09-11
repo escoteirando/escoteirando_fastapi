@@ -1,9 +1,14 @@
 <template>
   <v-app-bar app color="primary" dark>
     <div class="d-flex align-center">
-      <a href="/f">
-        <v-img alt="Scouts Logo" class="shrink mr-2" contain :src="scout_logo" width="50" />
-      </a>
+      <v-img
+        alt="Scouts Logo"
+        class="shrink mr-2"
+        @click="goHome"
+        contain
+        :src="scout_logo"
+        width="50"
+      />
       <h1 class="d-none d-lg-block">Escoteirando</h1>
     </div>
 
@@ -31,8 +36,11 @@ export default {
     testClick() {
       this.$alert("Teste", "Título", "success");
     },
+    goHome() {
+      if (this.$router.history.current.name != "home") {
+        this.$router.push({ name: "home" });
+      }
+    },
   },
 };
 </script>
-
-<style></style>

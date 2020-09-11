@@ -4,6 +4,7 @@ import { local_storage_factory } from '../../plugins/local_storage'
 const local_storage = local_storage_factory()
 const storage_login = MappaStorage + '_LOGIN'
 const storage_secoes = MappaStorage + '_SECOES'
+const storage_equipe = MappaStorage + '_EQUIPE'
 
 const state = {
     mappa: {
@@ -19,11 +20,28 @@ const state = {
         nascimento: null,
         mappa_user: null
     },
-    secoes: []
+    secoes: [],
+    equipe: [
+        {
+            codigo: 0,
+            nome: null,
+            codigoSecao: 0,
+            codigoLider: 0,
+            codigoViceLider: 0,
+            associados: [
+                {
+                    codigo: 0,
+                    nome: null,
+                    dataNascimento: "2020-09-11T01:10:45.318Z",
+                    sexo: null
+                }]
+        }
+    ]
 }
 const getters = {
     getMappa: (s) => s.mappa,
-    getSecoes: (s) => s.secoes
+    getSecoes: (s) => s.secoes,
+    getEquipe: (s) => s.equipe
 }
 
 const actions = {
@@ -45,6 +63,10 @@ const actions = {
     setSecoes({ commit }, secoes) {
         commit('SET_SECOES', secoes)
         local_storage.setValue(storage_secoes, secoes)
+    },
+    setEquipe({ commit }, equipe) {
+        commit('SET_EQUIPE', equipe)
+        local_storage.setValue(storage_equipe, equipe)
     }
 }
 const mutations = {
@@ -70,6 +92,9 @@ const mutations = {
     },
     SET_SECOES(s, secoes) {
         s.secoes = secoes
+    },
+    SET_EQUIPE(s, equipe) {
+        s.equipe = equipe
     }
 }
 

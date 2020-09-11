@@ -44,3 +44,13 @@ export const isValidPassword = (password) => passwordNeeds(password).length == 0
 
 export const dateAsString = (date) =>
     date ? date.toLocaleDateString() : "00/00/0000"
+
+export const idadeAsString = (date) => {
+    let ageDifMs = Date.now() - new Date(date).getTime();
+    let ageDate = new Date(ageDifMs)
+    if (ageDate.getMonth() == 1) {
+        return `${ageDate.getUTCFullYear() - 1970}a.`
+    } else {
+        return `${ageDate.getUTCFullYear() - 1970}a/${ageDate.getMonth() - 1}m.`
+    }
+}
