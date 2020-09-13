@@ -9,8 +9,6 @@ class ProgressaoModel(BaseModel):
     ordenacao: int
     codigoCaminho: int
     codigoDesenvolvimento: int
-    numeroGrupo: int
-    codigoRegiao: str
     codigoCompetencia: int
     segmento: str
 

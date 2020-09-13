@@ -13,11 +13,7 @@
     </div>
 
     <v-spacer></v-spacer>
-
-    <v-btn @click="testClick" text>
-      <span class="mr-2">Test</span>
-      <v-icon>mdi-open-in-new</v-icon>
-    </v-btn>
+   
     <NavBarTestMenu />
     <NavBarUserMenu />
   </v-app-bar>
@@ -33,9 +29,6 @@ export default {
   }),
 
   methods: {
-    testClick() {
-      this.$alert("Teste", "Título", "success");
-    },
     goHome() {
       if (this.$router.history.current.name != "home") {
         this.$router.push({ name: "home" });

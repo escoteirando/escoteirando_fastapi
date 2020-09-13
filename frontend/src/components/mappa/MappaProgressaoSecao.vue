@@ -3,7 +3,9 @@
     <v-card class="mx-auto" :loading="loading">
       <v-card-title>Progressão da Seção</v-card-title>
       <v-card-text v-if="!loading">
-        <MappaProgressaoChart :chartdata="datacollection" />
+        <v-select :items="anos" v-model="ano" @change="changedAno" label="Ano" />
+        <br />
+        <MappaProgressaoChart v-if="!loading" :chart-data="datacollection" ref="chart" />
       </v-card-text>
     </v-card>
   </v-col>
@@ -15,22 +17,44 @@ import { dateAsString } from "../../api/tools";
 export default {
   components: { MappaProgressaoChart },
   data() {
-    return { datacollection: null, codigoSecao: 0, loading: true };
+    return {
+      datacollection: null,
+      loading: true,
+      progressoesPorAno: {},
+      anos: [],
+      ano: null,
+      progressoes: null,
+    };
   },
   async mounted() {
     const secao = await this.API.MAPPA.getSecao();
     if (secao) {
-      this.codigoTipoSecao = secao.codigoTipoSecao;
-      this.codigoSecao = secao.codigo;
-      let progressoes = await this.API.MAPPA.getProgressoesSecao(
-        this.codigoSecao
-      );
-      this.fillData(progressoes);
+      this.progressoes = await this.API.MAPPA.getProgressoesSecao(secao.codigo);
+      console.log("PROGRESSOES", this.progressoes);
+      this.selecionarAnos();
+      this.changedAno();
     }
     this.loading = false;
   },
   methods: {
-    fillData(progressoes) {
+    selecionarAnos() {
+      let ano;
+      let anos = {};
+      this.progressoes.forEach(function (progressao) {
+        ano = progressao.data.substring(0, 4);
+        anos[ano] = true;
+      });
+
+      this.anos = Object.keys(anos);
+      this.ano = ano;
+    },
+    changedAno() {
+      console.log("Carregando Progressoes Ano", this.ano);
+      this.loading = true;
+      this.fillData(this.ano);
+      this.loading = false;
+    },
+    fillData(ano) {
       let ind = 0;
       let labels = [];
       let f = [];
@@ -39,16 +63,18 @@ export default {
       let a = [];
       let s = [];
       let e = [];
-      for (ind = 0; ind < progressoes.length; ind++) {
-        labels.push(
-          dateAsString(new Date(progressoes[ind].data)).substring(3, 10)
-        );
-        f.push(progressoes[ind].f);
-        i.push(progressoes[ind].i);
-        c.push(progressoes[ind].c);
-        a.push(progressoes[ind].a);
-        s.push(progressoes[ind].s);
-        e.push(progressoes[ind].e);
+      for (ind = 0; ind < this.progressoes.length; ind++) {
+        const progressao = this.progressoes[ind];
+        if (progressao.data.substring(0, 4) != ano) {
+          continue;
+        }
+        labels.push(dateAsString(new Date(progressao.data)).substring(3, 10));
+        f.push(progressao.f);
+        i.push(progressao.i);
+        c.push(progressao.c);
+        a.push(progressao.a);
+        s.push(progressao.s);
+        e.push(progressao.e);
       }
 
       this.datacollection = {
@@ -62,7 +88,7 @@ export default {
           },
           {
             label: "Intelectual",
-            backgroundColor: "#000080",            
+            backgroundColor: "#000080",
             data: i,
             fill: false,
           },
@@ -92,6 +118,7 @@ export default {
           },
         ],
       };
+      console.log("Ano Selecionado", this.datacollection);
     },
   },
 };
