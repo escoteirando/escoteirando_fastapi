@@ -13,6 +13,7 @@ import UserProfile from '../views/user/UserProfile'
 import MappaMinhaSecao from '../views/mappa/MappaMinhaSecao'
 import MappaLogin from '../views/mappa/MappaLogin'
 
+import BrowseAtividades from '../views/atividades/BrowseAtividades'
 // import store from '../store'
 
 import Home from '../views/Home'
@@ -31,6 +32,7 @@ const routes = [
     { path: '/mappa/login', name: 'mappa_login', component: MappaLogin },
     { path: '/test', name: 'test', component: Testing },
     { path: '/no_backend', name: 'no_backend', component: ErrorBackend },
+    { path: '/atividades/browse', name: 'atividades', component: BrowseAtividades },
     { path: '*', name: '404', component: Error404 }
 ]
 

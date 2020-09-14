@@ -31,13 +31,14 @@ export default {
     console.log("[HOME] user", user);
     if (user.ueb_id == 0 && !user.mappa_user) {
       console.log("[HOME] ASKING FOR MAPPA USER");
-      this.$prompt(
+      const that = this;
+      this.$confirm(
         "Você deseja integrar as informações do mAPPa Adulto?",
         "Atenção",
         "question"
       ).then(function (r) {
         if (r) {
-          this.$router.push({
+          that.$router.push({
             name: "mappa",
             query: { redirect: window.location.pathname },
           });         

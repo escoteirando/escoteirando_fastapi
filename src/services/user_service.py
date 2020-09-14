@@ -52,6 +52,7 @@ class UserService:
             password_hash=self._password_hash(user_request.password),
             creation_date=datetime.now(),
             validated=False,
+            mappa_valid_until=0
         )
         if self._user_repository.save(user):
             # TODO: Enviar email de validação do usuário

@@ -17,16 +17,18 @@ async def validate_auth(request: Request, call_next):
     global _noauth_routes
     start_time = time.time()
 
-    if (
-        request.method.upper() == "OPTIONS"
+    if (request.method.upper() == "OPTIONS"
         or request.url.path in _noauth_routes
-        or not request.url.path.startswith("/api")
-    ):
+            or not request.url.path.startswith("/api")):
         response = await call_next(request)
         response.headers["X-Process-Time"] = str(time.time() - start_time)
         return response
 
-    authorization = request.headers.get("authorization", None)
+    try:
+        authorization = request.headers.get("authorization", None)
+    except Exception as exc:
+        logger.error("ERROR ON GET REQUEST HEADERS %s", exc)
+        authorization = None
     if not authorization:
         logger.warning("MISSING AUTHORIZATION FOR %s", request.url.path)
         return JSONResponse(
@@ -43,10 +45,11 @@ async def validate_auth(request: Request, call_next):
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"msg": "Invalid or expired authorization"},
         )
-    if not user_authorization.user.active:
-        return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"msg": "Inactive user"})
+    # if not user_authorization.user.active:
+    #     return JSONResponse(
+    #         status_code=status.HTTP_401_UNAUTHORIZED,
+    #         content={"msg": "Inactive user"})
+    # TODO: Habilitar ativação do usuário por e-mail
 
     request.scope["USER"] = user_authorization.user
     request.scope["AUTH"] = authorization

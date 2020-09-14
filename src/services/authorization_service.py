@@ -67,8 +67,9 @@ class AuthorizationService:
         if not self._user_service.is_valid_password(user, password):
             return AuthLoginResponse(message="Senha inválida")
 
-        if not user.active:
-            return AuthLoginResponse(message="User is inactive")
+        # if not user.active:
+        #     return AuthLoginResponse(message="Usuário não está ativo")
+        # TODO: Enviar e-mail de confirmação para o cadastro do usuário
 
         valid_until = time.time() + self._config.AUTHORIZATION_TTL
         auth = self.create_authorizaton(user)

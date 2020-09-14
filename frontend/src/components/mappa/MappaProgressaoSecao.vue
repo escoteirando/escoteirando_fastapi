@@ -18,7 +18,7 @@ export default {
   components: { MappaProgressaoChart },
   data() {
     return {
-      datacollection: null,
+      datacollection: { labels: [], datasets: [] },
       loading: true,
       progressoesPorAno: {},
       anos: [],
@@ -54,6 +54,7 @@ export default {
       this.fillData(this.ano);
       this.loading = false;
     },
+
     fillData(ano) {
       let ind = 0;
       let labels = [];

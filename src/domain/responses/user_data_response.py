@@ -8,13 +8,13 @@ class UserDataResponse(BaseModel):
     id: int
     name: str
     email: str
-    full_name: str
+    full_name: Union[str, None]
     ueb_id: int
     mappa_user: Union[str, None]
     mappa_auth: Union[str, None]
     mappa_valid_until: Union[int, None]
-    nascimento: date
-    sexo: str
+    nascimento: Union[date, None]
+    sexo: Union[str, None]
 
     # nome_usuario: null,
     # nome_completo: null,

@@ -4,7 +4,7 @@ import { Line, mixins } from "vue-chartjs";
 export default {
   extends: Line,
   mixins: [mixins.reactiveProp],
-  props: ["options"],
+  props: ["options"],  
   computed: {
     cmpOptions() {
       if (!this.options) {
@@ -34,7 +34,7 @@ export default {
               display: true,
               scaleLabel: {
                 display: true,
-                labelString: "Value",
+                labelString: "Progressões",
               },
             },
           },

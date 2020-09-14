@@ -1,5 +1,5 @@
 from datetime import date, datetime
-from typing import Union
+from typing import Union, Optional
 
 from pydantic import BaseModel, validator
 
@@ -10,12 +10,12 @@ class User(BaseModel):
     id: int
     name: str
     email: str
-    full_name: Union[str, None]
+    full_name: Optional[str]
     ueb_id: Union[int, None]  # user_id: int
     mappa_user: Union[str, None]  # user_name
     mappa_auth: Union[str, None]  # authentication
     mappa_valid_until: Union[int, None]  # auth_valid_until: Optional[int]
-    sexo: Union[TipoSexo, None]
+    sexo: Optional[TipoSexo]
     nascimento: Union[datetime, None]
     ramo: Union[TipoRamo, None]
     active: bool
@@ -26,6 +26,6 @@ class User(BaseModel):
 
     @validator("nascimento", pre=True)
     def convert_nascimento(cls, v):
-        if isinstance(v, date) or isinstance(v.datetime):
+        if isinstance(v, date) or isinstance(v, datetime):
             return datetime(v.year, v.month, v.day)
         return v
