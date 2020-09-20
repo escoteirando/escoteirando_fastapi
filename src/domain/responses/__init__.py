@@ -5,8 +5,10 @@ __all__ = [
     "UserDataResponse",
     "BaseResponse",
     "UserHomeCardResponse",
+    "AtividadeResponse"
 ]
 
+from .atividade_response import AtividadeResponse
 from .auth_login_response import AuthLoginResponse
 from .auth_subscribe_response import AuthSubscribeResponse
 from .base_response import BaseResponse

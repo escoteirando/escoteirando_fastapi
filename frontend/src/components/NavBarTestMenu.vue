@@ -2,7 +2,7 @@
   <v-menu bottom offset-y left open-on-hover>
     <template v-slot:activator="{ on, attrs }">
       <v-btn dark icon v-bind="attrs" v-on="on">
-        <v-icon>mdi-dots-vertical</v-icon>
+        <v-icon>mdi-circle</v-icon>
       </v-btn>
     </template>
 

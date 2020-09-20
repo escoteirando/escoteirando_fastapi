@@ -1,5 +1,5 @@
 module.exports = {
-  "outputDir": "/home/guionardo/dev/projects/escoteirando_fastapi/static",
+  "outputDir": process.cwd()+"/static",
   "publicPath": "/f",
   "transpileDependencies": [
     "vuetify"

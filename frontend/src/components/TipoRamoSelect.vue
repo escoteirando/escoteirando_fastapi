@@ -11,14 +11,14 @@
 </template>
 
 <script>
-import { tipos_ramos } from "../api/consts";
+import { getDictAsList } from "../api/dicionario";
 export default {
   props: { tipo: String },
   data: () => ({
     tp_ramo: null,
   }),
   computed: {
-    items: () => tipos_ramos,
+    items: () => getDictAsList("ramo"),
   },
   methods: {
     changeTipo(value) {

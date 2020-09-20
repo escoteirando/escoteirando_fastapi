@@ -5,7 +5,15 @@
       <v-card-text v-if="!loading">
         <v-select :items="anos" v-model="ano" @change="changedAno" label="Ano" />
         <br />
-        <MappaProgressaoChart v-if="!loading" :chart-data="datacollection" ref="chart" />
+        <MappaProgressaoChart
+          v-if="!loading && !semDados"
+          :chart-data="dataCollection"
+          ref="chart"
+        />
+        <v-alert
+          v-if="semDados"
+          type="warning"
+        >Não foram encontrados dados de progressão para {{ano}}</v-alert>
       </v-card-text>
     </v-card>
   </v-col>
@@ -18,12 +26,13 @@ export default {
   components: { MappaProgressaoChart },
   data() {
     return {
-      datacollection: { labels: [], datasets: [] },
+      dataCollection: { labels: [], datasets: [] },
       loading: true,
       progressoesPorAno: {},
       anos: [],
       ano: null,
       progressoes: null,
+      semDados: false,
     };
   },
   async mounted() {
@@ -64,6 +73,7 @@ export default {
       let a = [];
       let s = [];
       let e = [];
+      this.semDados = true;
       for (ind = 0; ind < this.progressoes.length; ind++) {
         const progressao = this.progressoes[ind];
         if (progressao.data.substring(0, 4) != ano) {
@@ -76,9 +86,10 @@ export default {
         a.push(progressao.a);
         s.push(progressao.s);
         e.push(progressao.e);
+        this.semDados = false;
       }
 
-      this.datacollection = {
+      this.dataCollection = {
         labels: labels,
         datasets: [
           {
@@ -119,7 +130,8 @@ export default {
           },
         ],
       };
-      console.log("Ano Selecionado", this.datacollection);
+      console.log(this.$refs.chart);
+      console.log("Ano Selecionado", this.dataCollection);
     },
   },
 };

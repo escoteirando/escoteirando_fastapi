@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { areas_desenvolvimento } from "../api/consts";
+import { getDictAsList } from "../api/dicionario";
 export default {
   props: {
     tipo: {
@@ -22,7 +22,7 @@ export default {
     },
   },
   computed: {
-    items: () => areas_desenvolvimento,
+    items: () => getDictAsList("area"),
   },
   data: function () {
     return {

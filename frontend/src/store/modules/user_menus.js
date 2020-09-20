@@ -1,11 +1,14 @@
 import router from '@/router'
 
 const state = {
-    nav_menu: [{ id: 999, text: "Sair", icon: "mdi-exit-to-app", action: "logout" }]
+    nav_menu: [{ id: 999, text: "Sair", icon: "mdi-exit-to-app", action: "logout" }],
+    cards: []
 }
 const getters = {
-    getNavMenu: s => s.nav_menu
+    getNavMenu: s => s.nav_menu,
+    getCards: s => s.cards
 }
+
 const actions = {
     load_user_menus({ commit }) {
         window.axios
@@ -14,6 +17,20 @@ const actions = {
                 commit('SET_USER_MENUS', result.data)
             })
             .catch((error) => console.error("[USER MENU]", error));
+    },
+    load_user_cards({ commit }) {
+        window.axios
+            .get("/api/user/home")
+            .then((result) => {
+                commit('SET_USER_CARDS', result.data)
+            })
+            .catch((error) => console.error("[HOME] CARDS", error));
+    },
+    setUserMenus({ commit }, menus) {
+        commit('SET_USER_MENUS', menus)
+    },
+    setUserCards({ commit }, cards) {
+        commit('SET_USER_CARDS', cards)
     },
     callAction({ dispatch }, action_id) {
         let actionLog = ''
@@ -41,6 +58,10 @@ const mutations = {
     SET_USER_MENUS(s, menus) {
         console.log('[MENUS]', menus)
         s.nav_menu = menus
+    },
+    SET_USER_CARDS(s, cards) {
+        console.log('[CARDS]', cards)
+        s.cards = cards
     }
 }
 

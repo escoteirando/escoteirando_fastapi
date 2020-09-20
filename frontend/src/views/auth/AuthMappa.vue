@@ -124,8 +124,7 @@ import store from "../../store";
 import { dateAsString } from "../../api/tools";
 import router from "@/router";
 import { mapGetters } from "vuex";
-import { ramos } from "../../api/consts";
-
+import { getDict } from "../../api/dicionario";
 export default {
   data() {
     return {
@@ -247,11 +246,12 @@ export default {
           console.log("[MAPPA SECOES]", data);
           let secoes = [];
           for (let i = 0; i < data.length; i++) {
+            const ramo = getDict("ramo", data[i].codigoTipoSecao);
             secoes.push({
-              img: ramos[data[i].codigoTipoSecao].logo,
+              img: ramo.logo,
               codigo: data[i].codigo,
               nome: data[i].nome,
-              tipo: ramos[data[i].codigoTipoSecao].text,
+              tipo: ramo.text,
             });
           }
 

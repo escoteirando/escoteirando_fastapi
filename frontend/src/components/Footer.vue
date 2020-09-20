@@ -31,6 +31,10 @@
         >mdi-test-tube</v-icon>
         <v-icon v-else color="green darken-2" title="Ambiente de produção">mdi-check-outline</v-icon>&nbsp;|
         <v-icon v-if="getAuth" :title="getAuth">mdi-account-key</v-icon>
+        <v-btn icon v-if="development" :href="goAPI" target="_empty" title="Documentação da API">
+          |
+          <v-icon>mdi-api</v-icon>
+        </v-btn>
       </v-card-text>
     </v-card>
   </v-footer>
@@ -78,7 +82,10 @@ export default {
     development: ENVIRONMENT == "DEVELOPMENT",
   }),
   computed: {
-    ...mapGetters("backend", ["getAuth"]),
+    ...mapGetters("backend", ["getAuth", "getHost"]),
+    goAPI() {
+      return this.getHost + "/docs";
+    },
   },
 };
 </script>

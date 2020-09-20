@@ -9,6 +9,7 @@
 <script>
 import { mapGetters } from "vuex";
 import HomeCard from "../components/HomeCard";
+
 export default {
   components: { HomeCard },
   data: function () {
@@ -21,14 +22,12 @@ export default {
     },
   },
   async mounted() {
-    console.log("[VIEW HOME] MOUNTED");
     const user = await this.API.AUTH.getLoggedUser();
 
     if (!user) {
       this.$router.push({ name: "login" });
       return;
     }
-    console.log("[HOME] user", user);
     if (user.ueb_id == 0 && !user.mappa_user) {
       console.log("[HOME] ASKING FOR MAPPA USER");
       const that = this;
@@ -41,22 +40,19 @@ export default {
           that.$router.push({
             name: "mappa",
             query: { redirect: window.location.pathname },
-          });         
+          });
         }
       });
     }
+    console.log("[MAPPA] progressões", this.API.MAPPA.getTodasProgressoes());
     this.LoadUserCards();
   },
   methods: {
-    LoadUserCards() {
-      window.axios
-        .get("/api/user/home")
-        .then((response) => {
-          this.cards = response.data;
-          this.cards.push({ title: "Login", route: "login", flex: 4 });
-          this.cards.push({ title: "Swagger", route: this.swagger, flex: 4 });
-        })
-        .catch((error) => console.error("[HOME] CARDS", error));
+    async LoadUserCards() {
+      let cards = await this.API.USER.getUserCards();
+      if (cards) {
+        this.cards = cards;
+      }
     },
   },
 };

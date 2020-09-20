@@ -53,7 +53,7 @@
               prepend-icon="mdi-gender-male-female"
               :items="genders"
               item-text="text"
-              item-value="code"
+              item-value="id"
               v-model="user.gender"
               :readonly="!!user.mappa_username"
               :hint="mappaFieldHint"
@@ -83,7 +83,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { tipos_ramos } from "../../api/consts";
+import { getDictAsList } from "../../api/dicionario";
 const idadeMinima = 18;
 const aniversarioMaximo = new Date(
   new Date().getFullYear() - idadeMinima,
@@ -123,12 +123,8 @@ export default {
         (v) => /.+@.+\..+/.test(v) || "E-mail deve ser válido",
       ],
     },
-    genders: [
-      { code: "M", text: "Masculino" },
-      { code: "F", text: "Feminino" },
-      { code: "O", text: "Outro" },
-    ],
-    ramos: tipos_ramos,
+    genders: getDictAsList('sexo'),
+    ramos: getDictAsList("ramo"),
   }),
   computed: {
     ...mapGetters("backend", ["getUser"]),

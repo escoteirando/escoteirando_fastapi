@@ -44,7 +44,7 @@
                 />
               </v-col>
               <v-col cols="12" sm="6" md="4">
-                <v-text-field label="Nome" hint="Nome da atividade" v-model="filtro.nome"></v-text-field>
+                <v-text-field label="Palavras-chave" v-model="filtro.palavras_chave"></v-text-field>
               </v-col>
             </v-row>
           </v-container>
@@ -66,16 +66,17 @@
 </template>
 
 <script>
-import {
-  areas_desenvolvimento,
-  tipos_atividade,
-  tipos_ramos,
-} from "../../api/consts";
+import { getDictAsList, getDict } from "../../api/dicionario";
 export default {
   data() {
     return {
-      filtro: { area: null, tipo: null, ramo: null, nome: null },
-      ultimoFiltro: { area: null, tipo: null, ramo: null, nome: null },
+      filtro: { area: null, tipo: null, ramo: null, palavras_chave: null },
+      ultimoFiltro: {
+        area: null,
+        tipo: null,
+        ramo: null,
+        palavras_chave: null,
+      },
       areas: [],
       tipos: [],
       ramos: [],
@@ -86,25 +87,16 @@ export default {
     descricao() {
       let desc = [];
       if (this.filtro.area) {
-        desc.push(
-          "Área: " +
-            areas_desenvolvimento.filter((x) => x.id == this.filtro.area)[0]
-              .text
-        );
+        desc.push("Área: " + getDict("area", this.filtro.area).text);
       }
       if (this.filtro.tipo) {
-        desc.push(
-          "Tipo: " +
-            tipos_atividade.filter((x) => x.id == this.filtro.tipo)[0].text
-        );
+        desc.push("Tipo: " + getDict("atividade", this.filtro.tipo).text);
       }
       if (this.filtro.ramo) {
-        desc.push(
-          "Ramo: " + tipos_ramos.filter((x) => x.id == this.filtro.ramo)[0].text
-        );
+        desc.push("Ramo: " + getDict("ramo", this.filtro.ramo).text);
       }
-      if (this.filtro.nome) {
-        desc.push("Nome: " + this.filtro.nome);
+      if (this.filtro.palavras_chave) {
+        desc.push("Palavras-chave: " + this.filtro.palavras_chave);
       }
 
       if (desc.length == 0) {
@@ -114,10 +106,11 @@ export default {
     },
   },
   mounted() {
-    this.areas = [...areas_desenvolvimento];
+    this.areas = getDictAsList("area");
     this.areas.unshift({ id: null, text: "Todas" });
-    this.tipos = [...tipos_atividade];
-    this.ramos = [...tipos_ramos];
+    this.tipos = getDictAsList("atividade");
+    this.tipos.unshift({ id: null, text: "Todos" });
+    this.ramos = getDictAsList("ramo");
     this.ramos.unshift({ id: null, text: "Todos" });
   },
   methods: {

@@ -5,6 +5,7 @@ export const userNameRules = "De 5 a 20 caracteres alfanuméricos, ponto e hífe
 
 import { ENVIRONMENT } from './consts'
 
+
 const develop = ENVIRONMENT == 'DEVELOPMENT'
 
 export const passwordRules = [
@@ -54,3 +55,4 @@ export const idadeAsString = (date) => {
         return `${ageDate.getUTCFullYear() - 1970}a/${ageDate.getMonth() - 1}m.`
     }
 }
+

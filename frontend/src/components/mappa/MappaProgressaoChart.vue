@@ -44,7 +44,7 @@ export default {
     },
   },
   mounted() {
-    this.renderChart(this.chartdata, this.cmPoptions);
+    this.renderChart(this.chartData, this.cmPoptions);
   },
 };
 </script>

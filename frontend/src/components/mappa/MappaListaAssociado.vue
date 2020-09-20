@@ -10,8 +10,8 @@
 </template>
 
 <script>
-import { tipo_membro_equipe } from "../../api/consts";
 import { idadeAsString } from "../../api/tools";
+import { getDict } from "../../api/dicionario";
 export default {
   data: function () {
     return {
@@ -65,7 +65,7 @@ export default {
   methods: {
     getDescricao(associado, tipo) {
       return (
-        tipo_membro_equipe[this.codigoTipoSecao][tipo][associado.sexo] +
+        getDict("membro_equipe", this.codigoTipoSecao)[tipo][associado.sexo] +        
         " " +
         idadeAsString(associado.dataNascimento)
       );

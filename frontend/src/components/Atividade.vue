@@ -12,8 +12,8 @@
 
         <v-col cols="12" sm="6" md="4">
           <v-label class="pl-0">Duração: {{duracao[0]}} a {{duracao[1]}} min</v-label>
-          
-          <v-range-slider            
+
+          <v-range-slider
             v-model="duracao"
             thumb-label
             :max="120"
@@ -22,12 +22,11 @@
             step="5"
             ticks
             class="align-center"
-          >            
-          </v-range-slider>
+          ></v-range-slider>
         </v-col>
-        
-        <v-col cols="12" sm="6" md="4" v-if="ehAtividadeEducativa">
-          <v-text-field v-model="nome" label="Nome" />
+
+        <v-col cols="12" sm="6" md="4">
+          <v-text-field v-model="nome" label="Nome" prepend-icon="mdi-rename-box" />
         </v-col>
         <v-col cols="12" sm="6" md="4" v-if="ehAtividadeEducativa">
           <v-textarea
@@ -50,8 +49,8 @@
         <v-col v-if="ehAtividadeEducativa">
           <TipoAreaDesenvSelect v-on:changed="changedAreaDesenv" />
         </v-col>
-        <v-col v-if="ehAtividadeEducativa">
-          <ProgressoesSelect />
+        <v-col v-if="ehAtividadeEducativa && tp_ramo">
+          <ProgressoesSelect :ramo="tp_ramo" :key="tp_ramo" />
         </v-col>
       </v-row>
     </v-card-text>
@@ -62,10 +61,17 @@
 import TipoAtividadeSelect from "./TipoAtividadeSelect";
 import TipoRamoSelect from "./TipoRamoSelect";
 import TipoAreaDesenvSelect from "./TipoAreaDesenvSelect";
-import ProgressoesSelect from "./ProgressoesSelect"
-import { tipos_atividade_educativos } from "../api/consts";
+import ProgressoesSelect from "./ProgressoesSelect";
+
+import { getDict } from "../api/dicionario";
+
 export default {
-  components: { TipoAtividadeSelect, TipoRamoSelect, TipoAreaDesenvSelect ,ProgressoesSelect},
+  components: {
+    TipoAtividadeSelect,
+    TipoRamoSelect,
+    TipoAreaDesenvSelect,
+    ProgressoesSelect,
+  },
   props: {
     ramo: {
       type: String,
@@ -88,11 +94,12 @@ export default {
       como_avaliar: null,
       restricoes: [],
       progressoes: [],
+      key_ps: 0,
     };
   },
   computed: {
     ehAtividadeEducativa() {
-      return tipos_atividade_educativos.indexOf(this.tipo) !== -1;
+      return getDict("atividade", this.tipo || 1).educ;
     },
   },
   methods: {

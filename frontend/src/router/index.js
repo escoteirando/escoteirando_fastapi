@@ -32,7 +32,7 @@ const routes = [
     { path: '/mappa/login', name: 'mappa_login', component: MappaLogin },
     { path: '/test', name: 'test', component: Testing },
     { path: '/no_backend', name: 'no_backend', component: ErrorBackend },
-    { path: '/atividades/browse', name: 'atividades', component: BrowseAtividades },
+    { path: '/atividades', name: 'atividades', component: BrowseAtividades },
     { path: '*', name: '404', component: Error404 }
 ]
 

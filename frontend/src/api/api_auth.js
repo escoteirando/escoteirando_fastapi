@@ -1,7 +1,6 @@
 import store from '../store'
 import { AuthStorage } from './consts'
 
-
 export const api_auth_factory = function (axios, storage) {
 
     const login = function (username, password) {

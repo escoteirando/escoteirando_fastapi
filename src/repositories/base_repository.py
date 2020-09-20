@@ -14,7 +14,7 @@ _auto_inc_repository = None
 
 
 class BaseRepository:
-    def __init__(self, connection, entity_type, collection_name=None):
+    def __init__(self, connection, entity_type, collection_name=None, id_field="id"):
         global _auto_inc_repository
         _auto_inc_repository = AutoIncRepository.Instance(connection)
 
@@ -25,22 +25,39 @@ class BaseRepository:
             raise RepositoryException(
                 "Entity type is not a BaseModel", entity_type)
 
-        entity_name = str(entity_type).split("'")[1].split(".")[-1]
+        self._entity_name = str(entity_type).split("'")[1].split(".")[-1]
         self._entity_type = entity_type
 
-        self._collection_name = collection_name or entity_name
+        self._collection_name = collection_name or self._entity_name
 
         self._collection: Collection = connection.collection(
             self._collection_name)
         self._connection = connection
+        self._id_field = id_field
         self.logger.info(
             "INIT COLLECTION %s FOR ENTITY %s",
-            self._collection_name, entity_name
+            self._collection_name, self._entity_name
         )
 
     @property
     def collection(self) -> Collection:
         return self._collection
+
+    @property
+    def entity_name(self) -> str:
+        return self._entity_name
+
+    def get_by_id(self, id: int):
+        model = None
+        try:
+            existent = self._collection.find({'_id', id})
+            if existent:
+                existent.update({self._id_field: existent['_id']})
+                model = self._entity_type(**existent)
+        except Exception as exc:
+            self.logger.error("ERROR READING MODEL #%s %s: %s",
+                              id, self.entity_name, exc)
+        return model
 
     def save(self, model: BaseModel):
         if not isinstance(model, self._entity_type):
@@ -52,7 +69,7 @@ class BaseRepository:
             )
 
         try:
-            if model.id <= 0:
+            if getattr(model, self._id_field) <= 0:
                 # Insert
                 as_dict = self.check_types(model.dict())
                 as_dict["_id"] = _auto_inc_repository.get_next_id(
@@ -60,14 +77,15 @@ class BaseRepository:
 
                 result: InsertOneResult = self._collection.insert_one(as_dict)
                 if result.inserted_id:
-                    as_dict["id"] = as_dict["_id"]
+                    as_dict[self._id_field] = as_dict["_id"]
                     return self._entity_type(**as_dict)
             else:
                 as_dict = self.check_types(model.dict())
-                as_dict["_id"] = as_dict["id"]
-                del as_dict["id"]
+                as_dict["_id"] = as_dict[self._id_field]
+                del as_dict[self._id_field]
                 result: UpdateResult = self._collection.replace_one(
-                    filter={"_id": model.id}, replacement=as_dict, upsert=True
+                    filter={"_id": getattr(model, self._id_field)},
+                    replacement=as_dict, upsert=True
                 )
                 if result.upserted_id:
                     setattr(model, "_id", result.upserted_id)

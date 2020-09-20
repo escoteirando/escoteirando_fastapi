@@ -4,19 +4,21 @@ import dateutil.parser
 from fastapi import Request, Response, status
 
 from mappa.models.internal.user_info import UserInfoModel
-from mappa_api.models.export import ProgressaoSecaoArea
 from mappa_api.models import Secao
+from mappa_api.models.export import ProgressaoSecaoArea
+from mappa_api.models.enums import Ramo
 from src import app
 from src.domain.entities.user import User
 from src.domain.requests import AuthLoginRequest, MappaUserRequest
 from src.domain.responses import BaseResponse
-from src.domain.responses.mappa import (MAPPASecaoResponse,
+from src.domain.responses.mappa import (MAPPAProgressaoResponse,
+                                        MAPPASecaoResponse,
                                         MAPPASubsecaoResponse,
                                         MAPPAUserResponse)
 
 
 def verificar_usuario(request: Request, response: Response,
-                      testar_user_id: bool = True):
+                      testar_user_id: bool = True) -> (User, BaseResponse, str):
     user: User = request.scope["USER"]
     auth = request.scope["AUTH"]
     if not user:
@@ -154,3 +156,14 @@ def save_user(user_request: MappaUserRequest,
     except Exception as exc:
 
         pass
+
+
+@app.get("/api/mappa/progressoes/{codigo_ramo}",
+         response_model=List[MAPPAProgressaoResponse])
+def get_progressoes(codigo_ramo: Ramo, request: Request, response: Response):
+    user, result, _ = verificar_usuario(request, response)
+    if not user:
+        response.status_code = status.HTTP_401_UNAUTHORIZED
+        return
+    result = app.MAPPA.progressoes_ramo(user, codigo_ramo)
+    return result

@@ -1,19 +1,21 @@
 from datetime import datetime, timedelta
 from typing import List
 
-
-from mappa_api.models import Login, Secao
-from mappa_api.services import BIService, EscotistaService, MAPPAService
+from mappa_api.models import Login, Secao, Progressao
+from mappa_api.models.enums import Ramo
+from mappa_api.services import (BIService, EscotistaService, KBService,
+                                MAPPAService)
 from src.domain.entities.user import User
-from src.domain.responses.mappa import (MAPPASecaoResponse,
-                                        MAPPAUserResponse)
+from src.domain.responses.mappa import (MAPPAProgressaoResponse,
+                                        MAPPASecaoResponse, MAPPAUserResponse)
 
 
 class MAPPA_Service:
 
-    def __init__(self, cache, user_service):
+    def __init__(self, cache, user_service, progressao_repository):
         self._cache = cache
         self._user_service = user_service
+        self._progressao_repository = progressao_repository
 
     def _mappa(self) -> MAPPAService:
         return MAPPAService(self._cache)
@@ -124,3 +126,45 @@ class MAPPA_Service:
         bi = BIService(self._mappa())
         progressoes = bi.get_progressao_secao(login, codigo_secao)
         return progressoes
+
+    def progressoes_ramo(self, user: User, codigo_ramo: str):
+        ramo = Ramo(codigo_ramo)
+        progressoes = self.get_progressoes_repo(ramo)
+        if progressoes:
+            return progressoes
+        login = self.get_login(user)
+        if not login:
+            return None
+        mappa = self._mappa()
+        kb_service = KBService(mappa)
+        progressoes = kb_service.get_progressoes(login, ramo)
+        result = [MAPPAProgressaoResponse(
+            codigo=x.codigo,
+            descricao=x.descricao,
+            codigoUeb=x.codigoUeb,
+            ordenacao=x.ordenacao,
+            areaDesenvolvimento=x.area_desenvolvimento())
+            for x in progressoes]
+        self.save_progressoes_repo(progressoes)
+        return result
+
+    def get_progressoes_repo(self, ramo: Ramo) -> List[Progressao]:
+        """ Retorna todas as progressões disponíveis no banco de dados"""
+        if ramo is Ramo.Alcateia:
+            caminhos = [1, 2, 3]
+        elif ramo is Ramo.TropaEscoteira:
+            caminhos = [4, 5, 6]
+        elif ramo is Ramo.TropaSenior:
+            caminhos = [11, 12]
+        elif ramo is Ramo.ClaPioneiro:
+            caminhos = [15, 16]
+        else:
+            caminhos = [1, 2, 3, 4, 5, 6, 11, 12,
+                        13, 14, 15, 16, 17, 18, 19, 20]
+        filtro = {"codigoCaminho": {"$in": caminhos}}
+        result = self._progressao_repository.find(filtro)
+        return result
+
+    def save_progressoes_repo(self, progressoes: List[Progressao]):
+        for progressao in progressoes:
+            self._progressao_repository.save(progressao)

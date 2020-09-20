@@ -175,10 +175,18 @@ class UserService:
             )
         cards.append(
             UserHomeCardResponse(
-                title="Minhas atividades",
-                route="minhas_atividades",
-                subtitle="Atividades que criei",
+                title="Atividades",
+                route="atividades",
+                subtitle="Navegação por atividades",
             )
+        )
+        cards.append(
+            UserHomeCardResponse(
+                title="Encontros",
+                route="encontros",
+                subtitle="Navegação por encontros"
+            )
+
         )
         cards.append(
             UserHomeCardResponse(

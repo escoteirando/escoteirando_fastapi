@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { tipos_atividade } from "../api/consts";
+import { getDictAsList } from "../api/dicionario";
 
 export default {
   props: {
@@ -26,7 +26,7 @@ export default {
     tp_atividade: null,
   }),
   computed: {
-    items: () => tipos_atividade,
+    items: () => getDictAsList("atividade"),
   },
   methods: {
     changeTipo(value) {

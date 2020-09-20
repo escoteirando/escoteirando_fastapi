@@ -5,6 +5,7 @@ const local_storage = local_storage_factory()
 const storage_login = MappaStorage + '_LOGIN'
 const storage_secoes = MappaStorage + '_SECOES'
 const storage_equipe = MappaStorage + '_EQUIPE'
+const storage_progressoes = MappaStorage + '_PROGRESSOES'
 
 const state = {
     mappa: {
@@ -36,25 +37,42 @@ const state = {
                     sexo: null
                 }]
         }
-    ]
+    ],
+    progressoes: {
+        'A': [],
+        'E': [],
+        'S': [],
+        'P': []
+    }
 }
 const getters = {
     getMappa: (s) => s.mappa,
     getSecoes: (s) => s.secoes,
-    getEquipe: (s) => s.equipe
+    getEquipe: (s) => s.equipe,
+    getProgressoes: (s) => s.progressoes
 }
 
 const actions = {
     getMappaFromStorage({ commit }) {
         const mappa = local_storage.getValue(storage_login)
         const secoes = local_storage.getValue(storage_secoes)
-        console.log('[MAPPA] DATA', { mappa, secoes })
+        const progressoes = {}
+        const ramos = ['A', 'E', 'S', 'P']
+        ramos.forEach(function (x) {
+            progressoes[x] = local_storage.getValue(storage_progressoes + '_' + x)
+        })
+        console.log('[MAPPA] DATA', { mappa, secoes, progressoes })
         if (mappa) {
             commit('SET_MAPPA', mappa)
         }
         if (secoes) {
             commit('SET_SECOES', secoes)
         }
+        ramos.forEach(function (x) {
+            if (progressoes[x]) {
+                commit('SET_PROGRESSOES', x, progressoes[x])
+            }
+        })
     },
     setMappa({ commit }, mappa) {
         commit('SET_MAPPA', mappa)
@@ -67,8 +85,13 @@ const actions = {
     setEquipe({ commit }, equipe) {
         commit('SET_EQUIPE', equipe)
         local_storage.setValue(storage_equipe, equipe)
+    },
+    setProgressoes({ commit }, { ramo, progressoes }) {
+        commit('SET_PROGRESSOES', { ramo, progressoes })
+        local_storage.setValue(storage_progressoes + '_' + ramo, progressoes)
     }
 }
+
 const mutations = {
     SET_MAPPA(s, mappa) {
         // Tratar data de nascimento
@@ -95,6 +118,10 @@ const mutations = {
     },
     SET_EQUIPE(s, equipe) {
         s.equipe = equipe
+    },
+    SET_PROGRESSOES(s, { ramo, progressoes }) {
+        s.progressoes[ramo] = progressoes
+        console.log('[STORE MAPPA] PROGRESSOES ' + ramo, progressoes)
     }
 }
 

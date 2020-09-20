@@ -25,7 +25,7 @@ const getters = {
     getAuth: (s) => s.auth,
     getHost: (s) => s.host,
     getAuthorization: (s) => s.auth,
-    isLoggedUser: (s) => (s.auth && s.auth.authorization && s.auth.authorization.length > 0 && s.validUntil > currentTimeStamp),
+    isLoggedUser: (s) => (s.validUntil > currentTimeStamp()),
     getUser: (s) => s.user,
     isHealthy: (s) => s.healthy
 }

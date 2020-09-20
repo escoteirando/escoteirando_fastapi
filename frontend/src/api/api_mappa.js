@@ -137,12 +137,39 @@ export const api_mappa_factory = function (axios) {
         })
     }
 
+    const getTodasProgressoes = async function () {
+        return {
+            A: !! await getProgressoes('A'),
+            E: !! await getProgressoes('E'),
+            S: !! await getProgressoes('S'),
+            P: !! await getProgressoes('P')
+        }
+    }
 
 
     // Retorna lista de progressões do ramo
-    const getProgressoes = function (codigo_ramo) {
+    const getProgressoes = async function (codigo_ramo) {
+
+        let progressoes = store.getters['mappa/getProgressoes'][codigo_ramo]
+        if (!progressoes || progressoes.length == 0) {
+            try {
+                progressoes = await fetchProgressoes(codigo_ramo)
+                store.dispatch('mappa/setProgressoes', { ramo: codigo_ramo, progressoes })
+                console.log('[API MAPPA] PROGRESSOES [' + codigo_ramo + ']', progressoes)
+
+            }
+            catch (error) {
+                console.error('[API MAPPA] PROGRESSOES', error)
+                progressoes = null
+            }
+        }
+
+        return progressoes
+    }
+
+    const fetchProgressoes = function (codigo_ramo) {
         return new Promise((resolve, reject) => {
-            axios.get('/api/mappa/lista_progressoes?codigo_ramo=' + codigo_ramo)
+            axios.get('/api/mappa/progressoes/' + codigo_ramo)
                 .then(response => {
                     console.log('[API MAPPA] getProgressoes(' + codigo_ramo + ')', response.data)
                     resolve(response.data)
@@ -194,6 +221,7 @@ export const api_mappa_factory = function (axios) {
         getSecao,
         getSecoes,
         getProgressoes,
+        getTodasProgressoes,
         getEquipe,
         fetchEquipe,
         fetchProgressoesSecao,

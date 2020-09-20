@@ -28,32 +28,36 @@ export default {
     ],
   }),
   computed: {
-    ...mapGetters("backend", ["isLoggedUser"]),
     ...mapGetters("user_menus", ["getNavMenu"]),
     isEnabledMenu() {
-      return this.isLoggedUser && this.getNavMenu.length > 0;
+      return this.API.USER.isLogged(); //&& this.getNavMenu.length > 0;
     },
   },
   methods: {
-    ...mapActions("user_menus", ["callAction", "load_user_menus"]),
+    ...mapActions("user_menus", [
+      "callAction",
+      "load_user_menus",
+      "load_user_cards",
+    ]),
     menu_click(item) {
       this.callAction(item.id);
     },
-    load_menus() {
-      if (!this.isEnabledMenu) {
-        return;
+    async loadMenus() {
+      let menus = await this.API.USER.getUserMenus();
+      if (!menus) {
+        menus = [];
       }
-      this.load_user_menus()
-      window.axios
-        .get("/api/user/menu")
-        .then(function (result) {
-          this.menu_items = result;
-        })
-        .catch((error) => console.error("[USER MENU]", error));
+      let cards = await this.API.USER.getUserCards();
+      if (cards) {
+        let id = 600;
+        cards.forEach((x) => menus.push({ id: id++, text: x.title }));
+      }
+      console.log("[NAVBAR] MENUS", menus);
+      this.menu_items = menus;
     },
   },
   mounted() {
-    this.load_menus();
+    this.loadMenus();
   },
 };
 </script>
